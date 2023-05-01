@@ -11,19 +11,19 @@ PACKAGES = [
     {"Version": "^1.2.3", "Name": "React", "ID": "react1"},
 ]
 
-# Get database connection parameters from environment variables
-db_host = os.environ.get('DB_HOST')
-db_user = os.environ.get('DB_USER')
-db_password = os.environ.get('DB_PASSWORD')
-db_name = os.environ.get('DB_NAME')
+# # Get database connection parameters from environment variables
+# db_host = os.environ.get('DB_HOST')
+# db_user = os.environ.get('DB_USER')
+# db_password = os.environ.get('DB_PASSWORD')
+# db_name = os.environ.get('DB_NAME')
 
-# Configure database connection
-db = mysql.connector.connect(
-    host=db_host,
-    user=db_user,
-    password=db_password,
-    database=db_name
-)
+# # Configure database connection
+# db = mysql.connector.connect(
+#     host=db_host,
+#     user=db_user,
+#     password=db_password,
+#     database=db_name
+# )
 
 @app.route('/')
 def hello_world():
