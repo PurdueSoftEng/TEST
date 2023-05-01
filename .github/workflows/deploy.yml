@@ -19,7 +19,7 @@ jobs:
 
       # Deploy container image to Cloud Run
       - name: Deploy to Cloud Run
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@v0
         with:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
