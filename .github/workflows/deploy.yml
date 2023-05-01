@@ -24,14 +24,14 @@ jobs:
 
     - name: Build and push Docker image
       run: |-
-        docker build -t gcr.io/$PROJECT_ID/your-image-name:$GITHUB_SHA .
-        docker push gcr.io/$PROJECT_ID/your-image-name:$GITHUB_SHA
+        docker build -t gcr.io/$PROJECT_ID/image-name:$GITHUB_SHA .
+        docker push gcr.io/$PROJECT_ID/image-name:$GITHUB_SHA
 
     - name: Deploy to GCP
-      uses: google-github-actions/deploy-cloud-run@main
+      uses: google-github-actions/deploy-cloud-run@master
       with:
-        image: gcr.io/$PROJECT_ID/your-image-name:$GITHUB_SHA
-        service-name: your-service-name
+        image: gcr.io/$PROJECT_ID/image-name:$GITHUB_SHA
+        service-name: FlaskAPI
         platform: managed
         region: us-central1
         project_id: purdue-soft-eng-384818
