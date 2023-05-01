@@ -1,0 +1,38 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        version: 'latest'
+        project_id: purdue-soft-eng-384818
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+    - name: Configure Docker to use the gcloud command-line tool as a credential helper
+      run: |-
+        gcloud auth configure-docker
+
+    - name: Build and push Docker image
+      run: |-
+        docker build -t gcr.io/$PROJECT_ID/your-image-name:$GITHUB_SHA .
+        docker push gcr.io/$PROJECT_ID/your-image-name:$GITHUB_SHA
+
+    - name: Deploy to GCP
+      uses: google-github-actions/deploy-cloud-run@main
+      with:
+        image: gcr.io/$PROJECT_ID/your-image-name:$GITHUB_SHA
+        service-name: your-service-name
+        platform: managed
+        region: us-central1
+        project_id: purdue-soft-eng-384818
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
