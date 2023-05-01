@@ -22,7 +22,7 @@ def packages_list():
     for query in package_queries:
         if 'Name' not in query:
             return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
-            \ or it is formed improperly, or the AuthenticationToken is invalid ."}), 400
+            \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
     # Check for pagination offset
     offset = request.args.get('offset', 0)
