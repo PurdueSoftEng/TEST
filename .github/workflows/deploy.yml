@@ -17,6 +17,7 @@ jobs:
         version: 'latest'
         project_id: purdue-soft-eng-384818
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        ref: master
 
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
       run: |-
