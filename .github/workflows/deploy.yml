@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     # Build the container image
     - name: 'gcr.io/cloud-builders/docker'
@@ -21,48 +21,3 @@ jobs:
       args: ['run', 'deploy', 'rest-server', '--image', 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}', '--region', 'us-central1']
     images:
     - 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}'
-
-
-
-
-# name: Deploy to GCP
-
-# on:
-#   push:
-#     branches: [ master ]
-
-# env:
-#   PROJECT_ID: purdue-soft-eng-384818
-
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - uses: actions/checkout@v2
-
-#     - name: Set up Cloud SDK
-#       uses: google-github-actions/setup-gcloud@v0
-#       with:
-#         version: 'latest'
-#         project_id: ${{ env.PROJECT_ID }}
-#         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-#         ref: master
-
-#     - name: Configure Docker to use the gcloud command-line tool as a credential helper
-#       run: |-
-#         gcloud auth configure-docker
-#     - name: Build and push Docker image
-#       run: |-
-#         docker build -t gcr.io/${{ env.PROJECT_ID }}/image-name:${{ github.sha }} .
-#         docker push gcr.io/${{ env.PROJECT_ID }}/image-name:${{ github.sha }}
-#     - name: Deploy to GCP
-#       uses: google-github-actions/deploy-cloudrun@v1.0.1
-#       with:
-#         image: gcr.io/${{ env.PROJECT_ID }}/image-name:${{ github.sha }}
-#         service-name: FlaskAPI
-#         platform: managed
-#         region: us-central1
-#         project_id: ${{ env.PROJECT_ID }}
-#         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-#         ref: master
