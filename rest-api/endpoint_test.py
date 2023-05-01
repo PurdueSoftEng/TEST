@@ -118,6 +118,42 @@ def get_package_rating(id):
     # return the package rating object as JSON
     return jsonify(package_rating), 200
 
+# PackageByNameGet endpoint
+@app.route('/package/byName/<string:name>', methods=['GET'])
+def package_by_name_get(name):
+    if name in packages:
+        history = packages[name]
+        return jsonify(history), 200
+    else:
+        return jsonify({"message": "No such package."}), 404
+    
+# PackageByNameDelete endpoint
+@app.route('/package/byName/<string:name>', methods=['DELETE'])
+def package_by_name_delete(name):
+    if name in packages:
+        del packages[name]
+        return jsonify({"message": "Package is deleted."}), 200
+    else:
+        return jsonify({"message": "Package does not exist."}), 404
+    
+# Custom error handler for 400 Bad Request errors
+@app.errorhandler(400)
+def bad_request(e):
+    return jsonify({"message": "There is missing field(s) in the PackageName/AuthenticationToken or it is formed improperly, or the AuthenticationToken is invalid."}), 400 
+
+# Custom error handler for 404 Not Found errors
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"message": "No such package."}), 404
+
+# Custom JSON encoder to serialize datetime objects to ISO-8601 format
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat() + "Z"
+        return super().default(obj)
+
+app.json_encoder = CustomJSONEncoder
 
 if __name__ == '__main__':
     app.run(debug=True)
