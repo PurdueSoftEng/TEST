@@ -10,7 +10,7 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 
 #copy rest server folder to this image
-COPY rest-server/ ./
+COPY rest-api/ ./
 
 #ADD rest-server /path/inside/your/container
 
