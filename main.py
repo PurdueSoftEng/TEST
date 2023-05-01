@@ -28,7 +28,11 @@ db = mysql.connector.connect(
 @app.route('/')
 def hello_world():
     name = request.args.get('name', 'World')
-    return f'Hello {name}!'
+    return f'Howdy {name}!'
+
+@app.route('/checkdbcredentials')
+def check_db_credentials():
+    return f'Dbhost: {db_host}\nDbuser: {db_user}\nDbpassword: {db_password}\nDbdb: {db_name}!'
 
 @app.route('/authenticate', methods=['PUT'])
 def authenticate():
