@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 import mysql.connector
+import requests
 
 app = Flask(__name__)
 
@@ -24,6 +25,27 @@ PACKAGES = [
 #     password=db_password,
 #     database=db_name
 # )
+
+# Get database connection parameters from environment variables
+db_user = os.environ.get('DB_USER')
+db_password = os.environ.get('DB_PASSWORD')
+db_name = os.environ.get('DB_NAME')
+
+# Get Cloud SQL instance hostname from the metadata server
+metadata_server_url = 'http://metadata.google.internal/computeMetadata/v1/instance/attributes/'
+instance_hostname = requests.get(metadata_server_url + 'hostname', headers={'Metadata-Flavor': 'Google'}).text
+
+# Construct database connection parameters
+db_config = {
+    'user': db_user,
+    'password': db_password,
+    'host': instance_hostname,
+    'database': db_name,
+    'unix_socket': '/cloudsql/{}'.format(instance_hostname)
+}
+
+# Establish database connection
+db = mysql.connector.connect(**db_config)
 
 @app.route('/')
 def hello_world():
