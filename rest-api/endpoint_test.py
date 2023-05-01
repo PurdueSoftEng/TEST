@@ -1,3 +1,9 @@
+import re
+from datetime import datetime
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
 # Endpoint for getting packages
 @app.route('/packages', methods=['POST'])
 def get_packages():
@@ -52,3 +58,66 @@ def handle_bad_request(e):
 @app.errorhandler(401)
 def handle_unauthorized_access(e):
     return jsonify({'error': 'Unauthorized access.'}), 401
+
+@app.route('/package/byRegEx', methods=['POST'])
+def package_by_regex():
+    # Extract the request body JSON data
+    request_data = request.json
+
+    # Validate the request body
+    if 'RegEx' not in request_data:
+        return jsonify({'message': 'Missing RegEx field in request body'}), 400
+
+    # Extract the regular expression pattern from the request body
+    regex_pattern = request_data['RegEx']
+
+    # Perform the package search based on the regular expression pattern
+    # Here, we simply return a hard-coded list of package metadata
+    package_metadata = [
+        {'Name': 'Underscore', 'Version': '1.2.3'},
+        {'Name': 'Lodash', 'Version': '1.2.3-2.1.0'},
+        {'Name': 'React', 'Version': '^1.2.3'}
+    ]
+    matching_package_metadata = []
+    for metadata in package_metadata:
+        if re.search(regex_pattern, metadata['Name']) or re.search(regex_pattern, metadata['Version']):
+            matching_package_metadata.append(metadata)
+
+    # Return the matching package metadata as a JSON response
+    if len(matching_package_metadata) > 0:
+        return jsonify(matching_package_metadata), 200
+    else:
+        return jsonify({'message': 'No package found under this regex'}), 404
+
+    from flask import Flask, jsonify, request
+
+
+@app.route('/package/<string:id>/rate', methods=['GET'])
+def get_package_rating(id):
+    # get the package rating using the provided ID
+    # replace the return statement with the actual code for retrieving the rating
+    rating = {'RampUp': 0.8, 'Correctness': 0.9, 'BusFactor': 0.7,
+              'ResponsiveMaintainer': 0.6, 'LicenseScore': 0.85,
+              'GoodPinningPractice': 0.5, 'PullRequest': 0.75, 'NetScore': 0.77}
+
+    # check if all required metrics are present in the request
+    required_metrics = ['RampUp', 'Correctness', 'BusFactor', 'ResponsiveMaintainer',
+                        'LicenseScore', 'GoodPinningPractice', 'PullRequest', 'NetScore']
+    missing_metrics = [metric for metric in required_metrics if metric not in request.args]
+    if missing_metrics:
+        return jsonify({'error': f'Missing metrics: {", ".join(missing_metrics)}'}), 400
+
+    # construct the package rating object from the request arguments
+    package_rating = {}
+    for metric in required_metrics:
+        value = float(request.args.get(metric, -1))
+        if value < 0:
+            return jsonify({'error': f'Missing or invalid value for metric {metric}'}), 400
+        package_rating[metric] = value
+
+    # return the package rating object as JSON
+    return jsonify(package_rating), 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
