@@ -1,41 +1,32 @@
-# name: Deploy to GCP
+@app.route('/packages', methods=['POST'])
+def packages_list():
+    # Parse request body
+    package_queries = request.json
 
-# on:
-#   push:
-#     branches: [ master ]
+    for query in package_queries:
+        if 'Name' not in query:
+            return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+            \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+    
+    # Check for pagination offset
+    offset = request.args.get('offset', 0)
 
-# env:
-#   PROJECT_ID: purdue-soft-eng-384818
+    print("offset ", offset)
+        
+    # Mock database query
+    results = []
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - uses: actions/checkout@v2
-
-#     - name: Set up Cloud SDK
-#       uses: google-github-actions/setup-gcloud@v0
-#       with:
-#         version: 'latest'
-#         project_id: ${{ env.PROJECT_ID }}
-#         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-#         ref: master
-
-#     - name: Configure Docker to use the gcloud command-line tool as a credential helper
-#       run: |-
-#         gcloud auth configure-docker
-#     - name: Build and push Docker image
-#       run: |-
-#         docker build -t gcr.io/${{ env.PROJECT_ID }}/image-name:${{ github.sha }} .
-#         docker push gcr.io/${{ env.PROJECT_ID }}/image-name:${{ github.sha }}
-#     - name: Deploy to GCP
-#       uses: google-github-actions/deploy-cloudrun@v1.0.1
-#       with:
-#         image: gcr.io/${{ env.PROJECT_ID }}/image-name:${{ github.sha }}
-#         service-name: FlaskAPI
-#         platform: managed
-#         region: us-central1
-#         project_id: ${{ env.PROJECT_ID }}
-#         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-#         ref: master
+    for package in PACKAGES:
+        for query in package_queries:
+            print(query)
+            if query == '*' or query == package['Name']:
+                results.append(package)
+    
+    # Apply pagination
+    paginated_results = results[int(offset):int(offset)+10]  # limit to 10 results per page
+    
+    # Generate response
+    response = jsonify(paginated_results)
+    response.headers.add('offset', str(int(offset)+10))  # set next page offset in response header
+    
+    return response, 200
