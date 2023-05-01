@@ -37,3 +37,4 @@ jobs:
         region: us-central1
         project_id: purdue-soft-eng-384818
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        ref: master
