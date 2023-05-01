@@ -12,12 +12,11 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v0
       with:
         version: 'latest'
         project_id: purdue-soft-eng-384818
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        ref: refs/heads/master
 
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
       run: |-
@@ -29,7 +28,7 @@ jobs:
         docker push gcr.io/$PROJECT_ID/image-name:$GITHUB_SHA
 
     - name: Deploy to GCP
-      uses: google-github-actions/deploy-cloud-run@master
+      uses: google-github-actions/deploy-cloud-run@v0
       with:
         image: gcr.io/$PROJECT_ID/image-name:$GITHUB_SHA
         service-name: FlaskAPI
@@ -37,4 +36,3 @@ jobs:
         region: us-central1
         project_id: purdue-soft-eng-384818
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        ref: refs/heads/master
