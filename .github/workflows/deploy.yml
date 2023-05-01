@@ -9,15 +9,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Build the container image
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      # Build and push the container image
       - name: Build and push container
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           tags: gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}
-
-      # Deploy container image to Cloud Run
+      
+      # Deploy the container image to Cloud Run
       - name: Deploy to Cloud Run
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@v0
         with:
