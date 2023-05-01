@@ -1,16 +1,26 @@
-steps:
-# Build the container image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}A', '-f', 'rest-server/Dockerfile', '.']
-# Push the container image to Container Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}']
-# Deploy container image to Cloud Run
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
-  args: ['run', 'deploy', 'rest-server', '--image', 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}', '--region', 'us-central1']
-images:
-- 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}'
+
+name: Deploy to GCP
+
+on:
+  push:
+    branches: [ master ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Build the container image
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-t', 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}A', '-f', 'rest-server/Dockerfile', '.']
+    # Push the container image to Container Registry
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['push', 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}']
+    # Deploy container image to Cloud Run
+    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+      entrypoint: gcloud
+      args: ['run', 'deploy', 'rest-server', '--image', 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}', '--region', 'us-central1']
+    images:
+    - 'gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }}'
 
 
 
