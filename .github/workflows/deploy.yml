@@ -23,7 +23,7 @@ jobs:
         with:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-        run: |
-          gcloud run deploy rest-server \
-            --image=gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }} \
-            --region=us-central1
+          run: |
+            gcloud run deploy rest-server \
+              --image=gcr.io/${{ env.PROJECT_ID }}/rest-api:${{ github.sha }} \
+              --region=us-central1
