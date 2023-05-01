@@ -15,7 +15,7 @@ jobs:
       uses: google-github-actions/setup-gcloud@master
       with:
         version: 'latest'
-        project_id: <your-project-id>
+        project_id: purdue-soft-eng-384818
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
@@ -34,5 +34,5 @@ jobs:
         service-name: your-service-name
         platform: managed
         region: us-central1
-        project_id: <your-project-id>
+        project_id: purdue-soft-eng-384818
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
