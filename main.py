@@ -110,10 +110,11 @@ def add_package():
     # Parse request body
     request_body = request.json
 
-    # for query in request_body:
-    #     if 'Name' not in query:
-    #         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
-    #         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+    for query in request_body:
+        if ('Content' or 'URL' not in query) or ('Content' and 'URL' in query):
+            return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken\
+            \ or it is formed improperly (e.g. Content and URL are both set), or the\
+            \ AuthenticationToken is invalid."}), 400
     
     # Check for pagination offset
     #offset = request.args.get('offset', 0)
