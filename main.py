@@ -12,19 +12,23 @@ PACKAGES = [
     {"Version": "^1.2.3", "Name": "React", "ID": "react1"},
 ]
 
-# # Get database connection parameters from environment variables
+# Get database connection parameters from environment variables
 # db_host = os.environ.get('DB_HOST')
-# db_user = os.environ.get('DB_USER')
-# db_password = os.environ.get('DB_PASSWORD')
-# db_name = os.environ.get('DB_NAME')
+# db_user = os.environ.get('root')
+# db_password = os.environ.get('')
+# db_name = os.environ.get('gabby-sql')
+db_host = 'purdue-soft-eng-384818'
+db_user = 'root'
+db_password = ''
+db_name = 'gabby-sql'
 
-# # Configure database connection
-# db = mysql.connector.connect(
-#     host=db_host,
-#     user=db_user,
-#     password=db_password,
-#     database=db_name
-# )
+# Configure database connection
+db = mysql.connector.connect(
+    host=db_host,
+    user=db_user,
+    password=db_password,
+    database=db_name
+)
 
 # Get database connection parameters from environment variables
 db_user = os.environ.get('DB_USER')
