@@ -34,27 +34,36 @@ test_table = Table('test_table', metadata,
 # db_host = os.environ.get('35.192.15.50')
 # db_port = os.environ.get('3306')
 
+# Configure database connection settings
 db_user = 'root'
 db_password = ''
 db_name = 'gabby-sql'
-# db_host = '35.192.15.50'
-db_host = 'purdue-soft-eng-384818:us-central1:gabby-sql'
-db_port = '3306'
+cloud_sql_connection_name = 'purdue-soft-eng-384818:us-central1:gabby-sql'
+db_socket_dir = '/cloudsql'
 
 # Create PyMySQL connection
 conn = pymysql.connect(
     user=db_user,
     password=db_password,
-    host=db_host,
-    port=int(db_port),
-    database=db_name,
+    unix_socket=f'{db_socket_dir}/{cloud_sql_connection_name}',
+    db=db_name,
+    cursorclass=pymysql.cursors.DictCursor,
 )
 
-# Create SQLAlchemy engine
-engine = create_engine(f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}', echo=True)
-
-# Create the table in the database
-metadata.create_all(engine)
+# Create a test table and insert data
+@app.route('/create_table', methods=['POST'])
+def create_table():
+    cursor = conn.cursor()
+    cursor.execute(
+        "CREATE TABLE test_table (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))"
+    )
+    cursor.execute(
+        "INSERT INTO test_table (name) VALUES (%s)", 
+        ('test_data',)
+    )
+    conn.commit()
+    cursor.close()
+    return 'Table created and data inserted successfully.'
 
 @app.route('/add-table', methods=['POST'])
 def add_table():
