@@ -13,25 +13,6 @@ PACKAGES = [
     {"Version": "^1.2.3", "Name": "React", "ID": "react1"},
 ]
 
-# # Set up database connection details
-# db_user = os.environ.get('DB_USER')
-# db_password = os.environ.get('DB_PASSWORD')
-# db_name = os.environ.get('DB_NAME')
-# db_host = os.environ.get('DB_HOST')
-# db_port = os.environ.get('DB_PORT')
-
-# # Create PyMySQL connection
-# conn = pymysql.connect(
-#     user=db_user,
-#     password=db_password,
-#     host=db_host,
-#     port=int(db_port),
-#     database=db_name,
-# )
-
-# # Create SQLAlchemy engine
-# engine = create_engine(f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}', echo=True)
-
 # Define table metadata
 metadata = MetaData()
 test_table = Table('test_table', metadata,
