@@ -37,7 +37,8 @@ test_table = Table('test_table', metadata,
 db_user = 'root'
 db_password = ''
 db_name = 'gabby-sql'
-db_host = '35.192.15.50'
+# db_host = '35.192.15.50'
+db_host = 'purdue-soft-eng-384818:us-central1:gabby-sql'
 db_port = '3306'
 
 # Create PyMySQL connection
