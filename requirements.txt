@@ -2,5 +2,4 @@ pymysql
 Flask
 mysql-connector-python
 requests
-google-cloud-sql-connector
 sqlalchemy
