@@ -22,17 +22,17 @@ test_table = Table('test_table', metadata,
                   )
 
 # Set up database connection details
-db_user = os.environ.get('DB_USER')
-db_password = os.environ.get('DB_PASSWORD')
-db_name = os.environ.get('DB_NAME')
-db_host = os.environ.get('DB_HOST')
-db_port = os.environ.get('DB_PORT')
+# db_user = os.environ.get('DB_USER')
+# db_password = os.environ.get('DB_PASSWORD')
+# db_name = os.environ.get('DB_NAME')
+# db_host = os.environ.get('DB_HOST')
+# db_port = os.environ.get('DB_PORT')
 
-# db_user = os.environ.get('root')
-# db_password = os.environ.get('')
-# db_name = os.environ.get('gabby-sql')
-# db_host = os.environ.get('35.192.15.50')
-# db_port = os.environ.get(3306)
+db_user = os.environ.get('root')
+db_password = os.environ.get('')
+db_name = os.environ.get('gabby-sql')
+db_host = os.environ.get('35.192.15.50')
+db_port = os.environ.get(3306)
 
 # Create PyMySQL connection
 conn = pymysql.connect(
