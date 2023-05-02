@@ -5,6 +5,24 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, 
 
 app = Flask(__name__)
 
+# Configure database connection settings
+db_user = 'root'
+db_password = ''
+db_name = 'gabby-sql'
+cloud_sql_connection_name = 'purdue-soft-eng-384818:us-central1:gabby-sql'
+db_socket_dir = '/cloudsql'
+db_port = 3306
+
+# Create PyMySQL connection
+conn = pymysql.connect(
+    user=db_user,
+    password=db_password,
+    #unix_socket=f'{db_socket_dir}/{cloud_sql_connection_name}',
+    port=db_port
+    db=db_name,
+    cursorclass=pymysql.cursors.DictCursor,
+)
+
 # Define table metadata
 metadata = MetaData()
 test_table = Table('test_table', metadata,
@@ -12,22 +30,6 @@ test_table = Table('test_table', metadata,
                    Column('name', String(255)),
                    Column('value', Float),
                   )
-
-# Configure database connection settings
-db_user = 'root'
-db_password = ''
-db_name = 'gabby-sql'
-cloud_sql_connection_name = 'purdue-soft-eng-384818:us-central1:gabby-sql'
-db_socket_dir = '/cloudsql'
-
-# Create PyMySQL connection
-conn = pymysql.connect(
-    user=db_user,
-    password=db_password,
-    unix_socket=f'{db_socket_dir}/{cloud_sql_connection_name}',
-    db=db_name,
-    cursorclass=pymysql.cursors.DictCursor,
-)
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
