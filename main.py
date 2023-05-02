@@ -1,4 +1,3 @@
-
 import pymysql
 import os
 from flask import Flask, request, jsonify
@@ -6,12 +5,13 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, 
 
 app = Flask(__name__)
 
-# Mock data for packages
-PACKAGES = [
-    {"Version": "1.2.3", "Name": "Underscore", "ID": "underscore"},
-    {"Version": "1.2.3-2.1.0", "Name": "Lodash", "ID": "lodash"},
-    {"Version": "^1.2.3", "Name": "React", "ID": "react1"},
-]
+# Define table metadata
+metadata = MetaData()
+test_table = Table('test_table', metadata,
+                   Column('id', Integer, primary_key=True),
+                   Column('name', String(255)),
+                   Column('value', Float),
+                  )
 
 # Configure database connection settings
 db_user = 'root'
@@ -28,24 +28,6 @@ conn = pymysql.connect(
     db=db_name,
     cursorclass=pymysql.cursors.DictCursor,
 )
-
-# Create SQLAlchemy engine
-engine = create_engine(
-    # Example: 'mysql+pymysql://<db_user>:<db_pass>@/<db_name>?unix_socket=<socket_dir>/<cloud_sql_instance_name>'
-    f'mysql+pymysql://{db_user}:{db_password}@/{db_name}?unix_socket={db_socket_dir}/{cloud_sql_connection_name}'
-)
-
-# Define table metadata
-metadata = MetaData()
-
-# Create a table object for the existing "packages" table
-packages_table = Table('packages', metadata, autoload=True, autoload_with=engine)
-
-test_table = Table('test_table', metadata,
-                   Column('id', Integer, primary_key=True),
-                   Column('name', String(255)),
-                   Column('value', Float),
-                  )
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
@@ -155,21 +137,21 @@ def PackageCreate():
 
     response = request_body
 
-    query = packages_table.insert().values(
-        url='https://github.com/test/test',
-        version='1.0.0',
-        package_name='test',
-        jsprogram='console.log("test")',
-        content='test content',
-        metric_one=0,
-        metric_two=0,
-        metric_three=0,
-        metric_four=0,
-        metric_five=0,
-        metric_six=0,
-        metric_seven=0,
-        total_score=0
-    )
+    # query = packages_table.insert().values(
+    #     url='https://github.com/test/test',
+    #     version='1.0.0',
+    #     package_name='test',
+    #     jsprogram='console.log("test")',
+    #     content='test content',
+    #     metric_one=0,
+    #     metric_two=0,
+    #     metric_three=0,
+    #     metric_four=0,
+    #     metric_five=0,
+    #     metric_six=0,
+    #     metric_seven=0,
+    #     total_score=0
+    # )
 
     with conn.cursor() as cursor:
         cursor.execute(str(query))
