@@ -1,6 +1,6 @@
-Flask==2.0.0
-mysql-connector-python==8.0.26
-gunicorn
-requests
 pymysql
+Flask
+mysql-connector-python
+requests
+google-cloud-sql-connector
 sqlalchemy

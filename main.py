@@ -4,7 +4,7 @@ import os
 from flask import Flask, request, jsonify
 import mysql.connector
 import requests
-#from google.cloud.sql.connector import Connector
+from google.cloud.sql.connector import Connector
 import sqlalchemy
 from sqlalchemy import create_engine, Column, Integer, String, Float,LargeBinary, pool, text, exc, MetaData
 
