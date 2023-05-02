@@ -107,19 +107,19 @@ def authenticate():
 
 @app.route('/package', methods=['POST'])
 def add_package():
-    #Add package to database
+    #Add package to database [version]
+
     request_body = request.json
 
     #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
-    if (request_body['URL'] == None) and (request_body['Content'] != None):
+    if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken\
         \ or it is formed improperly (e.g. Content and URL are both set), or the\
         \ AuthenticationToken is invalid."}), 400
     
 
-    
-    # Check for pagination offset
-    #offset = request.args.get('offset', 0)
+    version = "1.0.0" #TODO: change this to use the library to get the version
+
     response = request_body
 
     return response, 201
