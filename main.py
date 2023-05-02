@@ -18,7 +18,7 @@ conn = pymysql.connect(
     user=db_user,
     password=db_password,
     #unix_socket=f'{db_socket_dir}/{cloud_sql_connection_name}',
-    port=db_port
+    port=db_port,
     db=db_name,
     cursorclass=pymysql.cursors.DictCursor,
 )
