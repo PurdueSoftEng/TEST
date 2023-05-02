@@ -13,14 +13,6 @@ PACKAGES = [
     {"Version": "^1.2.3", "Name": "React", "ID": "react1"},
 ]
 
-# Define table metadata
-metadata = MetaData()
-test_table = Table('test_table', metadata,
-                   Column('id', Integer, primary_key=True),
-                   Column('name', String(255)),
-                   Column('value', Float),
-                  )
-
 # Configure database connection settings
 db_user = 'root'
 db_password = ''
@@ -36,6 +28,24 @@ conn = pymysql.connect(
     db=db_name,
     cursorclass=pymysql.cursors.DictCursor,
 )
+
+# Create SQLAlchemy engine
+engine = create_engine(
+    # Example: 'mysql+pymysql://<db_user>:<db_pass>@/<db_name>?unix_socket=<socket_dir>/<cloud_sql_instance_name>'
+    f'mysql+pymysql://{db_user}:{db_password}@/{db_name}?unix_socket={db_socket_dir}/{cloud_sql_connection_name}'
+)
+
+# Define table metadata
+metadata = MetaData()
+
+# Create a table object for the existing "packages" table
+packages_table = Table('packages', metadata, autoload=True, autoload_with=engine)
+
+test_table = Table('test_table', metadata,
+                   Column('id', Integer, primary_key=True),
+                   Column('name', String(255)),
+                   Column('value', Float),
+                  )
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
@@ -106,8 +116,31 @@ def authenticate():
 
 
 @app.route('/package', methods=['POST'])
-def add_package():
+def PackageCreate():
     #Add package to database [version]
+
+    # "409":
+    #       description: Package exists already.
+    # "424":
+    #     description: Package is not uploaded due to the disqualified rating.
+
+    #     CREATE TABLE packages (
+    #   package_id SERIAL,
+    #   url VARCHAR,
+    #   version VARCHAR NOT NULL,
+    #   package_name VARCHAR NOT NULL,
+    #   jsprogram VARCHAR,
+    #   content VARCHAR,
+    #   metric_one REAL,
+    #   metric_two REAL,
+    #   metric_three REAL,
+    #   metric_four REAL,
+    #   metric_five REAL,
+    #   metric_six REAL,
+    #   metric_seven REAL,
+    #   total_score REAL,
+    #   PRIMARY KEY(package_id)
+    # );
 
     request_body = request.json
 
@@ -117,10 +150,30 @@ def add_package():
         \ or it is formed improperly (e.g. Content and URL are both set), or the\
         \ AuthenticationToken is invalid."}), 400
     
-
+    url = request_body['URL']
     version = "1.0.0" #TODO: change this to use the library to get the version
 
     response = request_body
+
+    query = packages_table.insert().values(
+        url='https://github.com/test/test',
+        version='1.0.0',
+        package_name='test',
+        jsprogram='console.log("test")',
+        content='test content',
+        metric_one=0,
+        metric_two=0,
+        metric_three=0,
+        metric_four=0,
+        metric_five=0,
+        metric_six=0,
+        metric_seven=0,
+        total_score=0
+    )
+
+    with conn.cursor() as cursor:
+        cursor.execute(str(query))
+        conn.commit()
 
     return response, 201
 
