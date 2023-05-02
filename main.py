@@ -10,7 +10,7 @@ app = Flask(__name__)
 PACKAGES = [
     {"Version": "1.2.3", "Name": "Underscore", "ID": "underscore"},
     {"Version": "1.2.3-2.1.0", "Name": "Lodash", "ID": "lodash"},
-    {"Version": "^1.2.3", "Name": "React", "ID": "react1"},
+    {"Version": "^1.2.3", "Name": "React", "ID": "react"},
 ]
 
 # Define table metadata
