@@ -1,5 +1,4 @@
 
-
 @app.route('/packages', methods=['POST'])
 def packages_list():
     # Parse request body
