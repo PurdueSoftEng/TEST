@@ -21,19 +21,6 @@ test_table = Table('test_table', metadata,
                    Column('value', Float),
                   )
 
-# Set up database connection details
-# db_user = os.environ.get('DB_USER')
-# db_password = os.environ.get('DB_PASSWORD')
-# db_name = os.environ.get('DB_NAME')
-# db_host = os.environ.get('DB_HOST')
-# db_port = os.environ.get('DB_PORT')
-
-# db_user = os.environ.get('root')
-# db_password = os.environ.get('')
-# db_name = os.environ.get('gabby-sql')
-# db_host = os.environ.get('35.192.15.50')
-# db_port = os.environ.get('3306')
-
 # Configure database connection settings
 db_user = 'root'
 db_password = ''
@@ -84,7 +71,7 @@ def hello_world():
 def authenticate():
     return jsonify({'message': 'This system does not support authentication.'}), 501
 
-@app.route('/packages', methods=['POST'])
+@app.route('/package', methods=['POST'])
 def packages_list():
     # Parse request body
     package_queries = request.json
@@ -116,6 +103,24 @@ def packages_list():
     response.headers.add('offset', str(int(offset)+10))  # set next page offset in response header
     
     return response, 200
+
+
+@app.route('/packages', methods=['POST'])
+def packages_list():
+    # Parse request body
+    request_body = request.json
+
+    for query in request_body:
+        if 'Name' not in query:
+            return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+            \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+    
+    # Check for pagination offset
+    #offset = request.args.get('offset', 0)
+    response = request_body
+
+    return response, 201
+
 
 
 if __name__ == "__main__":
