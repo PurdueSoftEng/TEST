@@ -106,7 +106,7 @@ def packages_list():
 
 
 @app.route('/packages', methods=['POST'])
-def packages_list():
+def package_add():
     # Parse request body
     request_body = request.json
 
