@@ -110,8 +110,7 @@ def add_package():
     # Parse request body
     request_body = request.json
 
-    # if ('Content' or 'URL' not in query) or ('Content' and 'URL' in query):
-    if 'URL' in request_body:
+    if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken\
         \ or it is formed improperly (e.g. Content and URL are both set), or the\
         \ AuthenticationToken is invalid."}), 400
