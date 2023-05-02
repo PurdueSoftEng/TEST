@@ -32,7 +32,7 @@ db_user = os.environ.get('root')
 db_password = os.environ.get('')
 db_name = os.environ.get('gabby-sql')
 db_host = os.environ.get('35.192.15.50')
-db_port = os.environ.get(3306)
+db_port = os.environ.get('3306')
 
 # Create PyMySQL connection
 conn = pymysql.connect(
