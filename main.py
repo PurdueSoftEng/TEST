@@ -167,7 +167,7 @@ def PackageCreate():
     metric_five = 0
     metric_six = 0
     metric_seven = 0
-    total_score = 0
+    total_score = 0.6
 
     
     id = package_name + version
@@ -210,7 +210,7 @@ def PackageCreate():
     }
 
     json_data = json.dumps(package_data)
-    
+
     return json_data, 201
 
 if __name__ == "__main__":
