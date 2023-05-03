@@ -40,7 +40,23 @@ test_table = Table('test_table', metadata,
                    Column('value', Float),
                   )
 
-packages_table = Table('packages', metadata)
+packages_table = Table('packages', metadata,
+                       Column('package_id', Integer, primary_key=True),
+                       Column('url', String),
+                       Column('version', String),
+                       Column('package_name', String),
+                       Column('jsprogram', String),
+                       Column('content', String),
+                       Column('metric_one', Float),
+                       Column('metric_two', Float),
+                       Column('metric_three', Float),
+                       Column('metric_four', Float),
+                       Column('metric_five', Float),
+                       Column('metric_six', Float),
+                       Column('metric_seven', Float),
+                       Column('total_score', Float),
+                       )
+
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
@@ -69,7 +85,7 @@ def add_table():
 
 @app.route('/')
 def hello_world():
-    cloud_run_logger.info('Hello, world!')
+    client.info('Hello, world!')
     name = request.args.get('name', 'World')
     return f'Howdy {name}!'
 
@@ -140,7 +156,7 @@ def PackageCreate():
 
     request_body = request.json
 
-    cloud_run_logger.info('Request: ', request_body)
+    client.info('Request: ', request_body)
 
     #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
     if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
