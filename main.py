@@ -160,7 +160,7 @@ def PackageCreate():
     response = request_body
 
     query = packages_table.insert().values(
-        url=url,
+        url=str(url),
         version='1.0.0',
         package_name='test',
         jsprogram='console.log("test")',
@@ -176,7 +176,7 @@ def PackageCreate():
     )
 
     with conn.cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute(str(query))
         conn.commit()
 
     return response, 201
