@@ -101,67 +101,67 @@ def authenticate():
 #     return response, 200
 
 
-@app.route('/package', methods=['POST'])
-def PackageCreate():
-    #Add package to database [version]
+# @app.route('/package', methods=['POST'])
+# def PackageCreate():
+#     #Add package to database [version]
 
-    # "409":
-    #       description: Package exists already.
-    # "424":
-    #     description: Package is not uploaded due to the disqualified rating.
+#     # "409":
+#     #       description: Package exists already.
+#     # "424":
+#     #     description: Package is not uploaded due to the disqualified rating.
 
-    #     CREATE TABLE packages (
-    #   package_id SERIAL,
-    #   url VARCHAR,
-    #   version VARCHAR NOT NULL,
-    #   package_name VARCHAR NOT NULL,
-    #   jsprogram VARCHAR,
-    #   content VARCHAR,
-    #   metric_one REAL,
-    #   metric_two REAL,
-    #   metric_three REAL,
-    #   metric_four REAL,
-    #   metric_five REAL,
-    #   metric_six REAL,
-    #   metric_seven REAL,
-    #   total_score REAL,
-    #   PRIMARY KEY(package_id)
-    # );
+#     #     CREATE TABLE packages (
+#     #   package_id SERIAL,
+#     #   url VARCHAR,
+#     #   version VARCHAR NOT NULL,
+#     #   package_name VARCHAR NOT NULL,
+#     #   jsprogram VARCHAR,
+#     #   content VARCHAR,
+#     #   metric_one REAL,
+#     #   metric_two REAL,
+#     #   metric_three REAL,
+#     #   metric_four REAL,
+#     #   metric_five REAL,
+#     #   metric_six REAL,
+#     #   metric_seven REAL,
+#     #   total_score REAL,
+#     #   PRIMARY KEY(package_id)
+#     # );
 
-    request_body = request.json
+#     request_body = request.json
 
-    #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
-    if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
-        return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken\
-        \ or it is formed improperly (e.g. Content and URL are both set), or the\
-        \ AuthenticationToken is invalid."}), 400
+#     #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
+#     if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
+#         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken\
+#         \ or it is formed improperly (e.g. Content and URL are both set), or the\
+#         \ AuthenticationToken is invalid."}), 400
     
-    url = request_body['URL']
-    version = "1.0.0" #TODO: change this to use the library to get the version
+#     url = request_body['URL']
+#     version = "1.0.0" #TODO: change this to use the library to get the version
 
-    response = request_body
+#     response = request_body
 
-    query = packages_table.insert().values(
-        url='https://github.com/test/test',
-        version='1.0.0',
-        package_name='test',
-        jsprogram='console.log("test")',
-        content='test content',
-        metric_one=0,
-        metric_two=0,
-        metric_three=0,
-        metric_four=0,
-        metric_five=0,
-        metric_six=0,
-        metric_seven=0,
-        total_score=0
-    )
+#     query = packages_table.insert().values(
+#         url='https://github.com/test/test',
+#         version='1.0.0',
+#         package_name='test',
+#         jsprogram='console.log("test")',
+#         content='test content',
+#         metric_one=0,
+#         metric_two=0,
+#         metric_three=0,
+#         metric_four=0,
+#         metric_five=0,
+#         metric_six=0,
+#         metric_seven=0,
+#         total_score=0
+#     )
 
-    with conn.cursor() as cursor:
-        cursor.execute(str(query))
-        conn.commit()
+#     with conn.cursor() as cursor:
+#         cursor.execute(str(query))
+#         conn.commit()
 
-    return response, 201
+#     return response, 201
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
