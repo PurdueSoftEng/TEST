@@ -3,6 +3,7 @@ import os
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 import logging
+import json
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 
@@ -163,7 +164,7 @@ def PackageCreate():
 
     request_body = request.json
 
-    logger.warning('Request: ', request_body)
+    logger.warning('Request: %s', json.dumps(request_body))
 
     #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
     # if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
