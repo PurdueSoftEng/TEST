@@ -92,7 +92,7 @@ def add_table():
 
 @app.route('/')
 def hello_world():
-    logger.info('Hello, world!')
+    logger.warning('Hello, world!')
     name = request.args.get('name', 'World')
     return f'Howdy {name}!'
 
@@ -163,10 +163,11 @@ def PackageCreate():
 
     request_body = request.json
 
-    logger.info('Request: ', request_body)
+    logger.warning('Request: ', request_body)
 
     #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
-    if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
+    # if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
+    if ((request_body['URL'] == None)) or (request_body['URL'] != None):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken\
         \ or it is formed improperly (e.g. Content and URL are both set), or the\
         \ AuthenticationToken is invalid."}), 400
