@@ -175,7 +175,7 @@ def PackageCreate():
         total_score=0
     )
 
-    logger.info("Str(query): ", str(query))
+    #logger.info("Str(query): ", str(query))
     logger.info("query: ", query)
 
 
