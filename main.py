@@ -1,11 +1,11 @@
 import pymysql
 import os
-from flask import Flask, request, jsonify
-from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 import logging
 import json
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
+from flask import Flask, request, jsonify
+from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 
 client = glogging.Client()
 
@@ -167,8 +167,7 @@ def PackageCreate():
     logger.warning('Request: %s', json.dumps(request_body))
 
     #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
-    # if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
-    if ((request_body['URL'] == None)) or (request_body['URL'] != None):
+    if ((request_body['URL'] == None) and (request_body['Content'] == None)) or ((request_body['URL'] != None) and (request_body['Content'] != None)):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken\
         \ or it is formed improperly (e.g. Content and URL are both set), or the\
         \ AuthenticationToken is invalid."}), 400
