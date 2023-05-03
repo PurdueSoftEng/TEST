@@ -144,24 +144,6 @@ def PackageCreate():
     # "424":
     #     description: Package is not uploaded due to the disqualified rating.
 
-    #     CREATE TABLE packages (
-    #   package_id SERIAL,
-    #   url VARCHAR,
-    #   version VARCHAR NOT NULL,
-    #   package_name VARCHAR NOT NULL,
-    #   jsprogram VARCHAR,
-    #   content VARCHAR,
-    #   metric_one REAL,
-    #   metric_two REAL,
-    #   metric_three REAL,
-    #   metric_four REAL,
-    #   metric_five REAL,
-    #   metric_six REAL,
-    #   metric_seven REAL,
-    #   total_score REAL,
-    #   PRIMARY KEY(package_id)
-    # );
-
     request_body = request.json
 
     logger.warning('Request: %s', json.dumps(request_body))
@@ -178,23 +160,39 @@ def PackageCreate():
     response = request_body
 
     query = packages_table.insert().values(
-        url='https://github.com/test/test',
-        version='1.0.0',
-        package_name='test',
-        jsprogram='console.log("test")',
-        content='test content',
-        metric_one=0,
-        metric_two=0,
-        metric_three=0,
-        metric_four=0,
-        metric_five=0,
-        metric_six=0,
-        metric_seven=0,
-        total_score=0
+        url=:url,
+        version=:version,
+        package_name=:package_name,
+        jsprogram=:jsprogram,
+        content=:content,
+        metric_one=:metric_one,
+        metric_two=:metric_two,
+        metric_three=:metric_three,
+        metric_four=:metric_four,
+        metric_five=:metric_five,
+        metric_six=:metric_six,
+        metric_seven=:metric_seven,
+        total_score=:total_score
     )
 
+    params = {
+        'url': 'https://github.com/test/test',
+        'version': '1.0.0',
+        'package_name': 'test',
+        'jsprogram': 'console.log("test")',
+        'content': 'test content',
+        'metric_one': 0,
+        'metric_two': 0,
+        'metric_three': 0,
+        'metric_four': 0,
+        'metric_five': 0,
+        'metric_six': 0,
+        'metric_seven': 0,
+        'total_score': 0
+    }
+
     with conn.cursor() as cursor:
-        cursor.execute(str(query))
+        cursor.execute(str(query), params)
         conn.commit()
 
     return response, 201
