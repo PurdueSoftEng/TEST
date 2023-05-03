@@ -31,6 +31,8 @@ test_table = Table('test_table', metadata,
                    Column('value', Float),
                   )
 
+packages_table = Table('packages', metadata)
+
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
 def create_table():
@@ -139,21 +141,21 @@ def PackageCreate():
 
     response = request_body
 
-    # query = packages_table.insert().values(
-    #     url='https://github.com/test/test',
-    #     version='1.0.0',
-    #     package_name='test',
-    #     jsprogram='console.log("test")',
-    #     content='test content',
-    #     metric_one=0,
-    #     metric_two=0,
-    #     metric_three=0,
-    #     metric_four=0,
-    #     metric_five=0,
-    #     metric_six=0,
-    #     metric_seven=0,
-    #     total_score=0
-    # )
+    query = packages_table.insert().values(
+        url='https://github.com/test/test',
+        version='1.0.0',
+        package_name='test',
+        jsprogram='console.log("test")',
+        content='test content',
+        metric_one=0,
+        metric_two=0,
+        metric_three=0,
+        metric_four=0,
+        metric_five=0,
+        metric_six=0,
+        metric_seven=0,
+        total_score=0
+    )
 
     with conn.cursor() as cursor:
         cursor.execute(str(query))
