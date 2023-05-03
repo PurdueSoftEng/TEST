@@ -10,7 +10,13 @@ client = logging.Client()
 handler = CloudLoggingHandler(client)
 handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
-logging.getLogger().addHandler(handler)
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
+logger.info("This is an info message")
+logger.warning("This is a warning message")
+logger.error("This is an error message")
 
 app = Flask(__name__)
 
@@ -85,7 +91,7 @@ def add_table():
 
 @app.route('/')
 def hello_world():
-    client.info('Hello, world!')
+    logger.info('Hello, world!')
     name = request.args.get('name', 'World')
     return f'Howdy {name}!'
 
@@ -156,7 +162,7 @@ def PackageCreate():
 
     request_body = request.json
 
-    client.info('Request: ', request_body)
+    logger.info('Request: ', request_body)
 
     #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
     if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
