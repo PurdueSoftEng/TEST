@@ -136,10 +136,7 @@ def authenticate():
 
 @app.route('/package', methods=['POST'])
 def PackageCreate():
-    # Add package to database [version]
-    # "409": description: Package exists already.
-    # "424": description: Package is not uploaded due to the disqualified rating.
-
+    # Add package to database
     request_body = request.json
     logger.warning('Request: %s', json.dumps(request_body))
 
@@ -172,7 +169,11 @@ def PackageCreate():
     metric_seven = 0
     total_score = 0
 
-    threshold = 0.5
+    
+    id = package_name + version
+    content = "base64-encoded package contents" #TODO update this with a content scraping program
+
+    threshold = 0.1
     
     if total_score < threshold:
         return jsonify({'error': "Package is not uploaded due to the disqualified rating."}), 424 
@@ -195,9 +196,22 @@ def PackageCreate():
         cursor.execute(sql, val)
         conn.commit()
 
-    response = "string"
+    package_data = {
+        "metadata": {
+            "Name": package_name,
+            "Version": version,
+            "ID": id
+        },
+        "data": {
+            "Content": content,
+            "URL": url,
+            "JSProgram": jsprogram
+        }
+    }
 
-    return request_body, 201
+    json_data = json.dumps(package_data)
+    
+    return json_data, 201
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
