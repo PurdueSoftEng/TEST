@@ -3,9 +3,6 @@ import os
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 from google.cloud import logging
-from google.cloud import storage
-
-
 
 # Instantiates a client
 client = logging.Client()
