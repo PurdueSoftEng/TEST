@@ -3,9 +3,10 @@ import os
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 import logging
+from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 
-client = logging.Client()
+client = glogging.Client()
 
 handler = CloudLoggingHandler(client)
 handler.setLevel(logging.INFO)
