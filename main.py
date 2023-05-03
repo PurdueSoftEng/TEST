@@ -31,7 +31,7 @@ test_table = Table('test_table', metadata,
                    Column('value', Float),
                   )
 
-packages_table = Table('packages', metadata)
+# packages_table = Table('packages', metadata)
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
