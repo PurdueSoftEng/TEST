@@ -159,29 +159,46 @@ def PackageCreate():
 
     response = request_body
 
-    query = packages_table.insert().values(
-        url=str(url),
-        version='1.0.0',
-        package_name='test',
-        jsprogram='console.log("test")',
-        content='test content',
-        metric_one=0,
-        metric_two=0,
-        metric_three=0,
-        metric_four=0,
-        metric_five=0,
-        metric_six=0,
-        metric_seven=0,
-        total_score=0
-    )
+    sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = [str(url), '1.0.0', 'test', 'console.log("test")', 'test content', 0, 0, 0, 0, 0, 0, 0, 0]
+You can insert the package data into the "packages" table in your cloud database using the SQL query and parameter values you have defined. Here's an updated version of your code with the necessary changes:
 
-    #logger.info("Str(query): ", str(query))
-    logger.info("query: ", query)
+python
 
+@app.route('/package', methods=['POST'])
+def PackageCreate():
+    # Add package to database [version]
+    # "409": description: Package exists already.
+    # "424": description: Package is not uploaded due to the disqualified rating.
+
+    request_body = request.json
+    logger.warning('Request: %s', json.dumps(request_body))
+
+    if ('URL' not in request_body) or ((request_body['URL'] == None) and ('Content' not in request_body)) or ((request_body['URL'] != None) and ('Content' in request_body)):
+        return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
+    
+    url = request_body['URL']
+    version = "1.0.0" # TODO: change this to use the library to get the version
+    package_name = 'test'
+    jsprogram = 'console.log("test")'
+    content = 'test content'
+    metric_one = 0
+    metric_two = 0
+    metric_three = 0
+    metric_four = 0
+    metric_five = 0
+    metric_six = 0
+    metric_seven = 0
+    total_score = 0
+
+    sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score]
 
     with conn.cursor() as cursor:
-        cursor.execute(str(query))
+        cursor.execute(sql, val)
         conn.commit()
+
+    response = "temp"
 
     return response, 201
 
