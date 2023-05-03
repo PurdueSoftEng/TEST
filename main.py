@@ -2,17 +2,15 @@ import pymysql
 import os
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
-from google.cloud import logging
+import logging
+from google.cloud.logging_v2.handlers import CloudLoggingHandler
 
-# Instantiates a client
 client = logging.Client()
 
-# Retrieves a Cloud Run logging handler and sets the name of the service
-handler = client.get_default_handler()
+handler = CloudLoggingHandler(client)
+handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
-cloud_run_logger = logging.getLogger('cloud_logger')
-cloud_run_logger.addHandler(handler)
-cloud_run_logger.setLevel(logging.INFO)
+logging.getLogger().addHandler(handler)
 
 app = Flask(__name__)
 
