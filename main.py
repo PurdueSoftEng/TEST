@@ -175,6 +175,10 @@ def PackageCreate():
         total_score=0
     )
 
+    logger.info("Str(query): ", str(query))
+    logger.info("query: ", query)
+
+
     with conn.cursor() as cursor:
         cursor.execute(str(query))
         conn.commit()
