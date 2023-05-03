@@ -3,4 +3,4 @@ gunicorn
 Flask
 requests
 sqlalchemy
-google
+google-cloud-logging
