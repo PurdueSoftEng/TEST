@@ -146,11 +146,23 @@ def PackageCreate():
     if ('URL' not in request_body) or ((request_body['URL'] == None) and ('Content' not in request_body)) or ((request_body['URL'] != None) and ('Content' in request_body)):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
     
+    if ('URL' in request_body):
+        url = request_body['URL']
+    else:
+        url = ''
+    
     url = request_body['URL']
     version = "1.0.0" # TODO: change this to use the library to get the version
-    package_name = 'test'
-    jsprogram = 'console.log("test")'
-    content = 'test content'
+    package_name = 'test' # TODO: change this to use the library to get the name
+    if ('JSProgram' in request_body):
+        jsprogram = request_body['JSProgram']
+    else:
+        jsprogram = ''
+    if ('Content' in request_body):
+        content = request_body['Content']
+    else:
+        content = ''
+
     metric_one = 0
     metric_two = 0
     metric_three = 0
@@ -159,6 +171,22 @@ def PackageCreate():
     metric_six = 0
     metric_seven = 0
     total_score = 0
+
+    threshold = 0.5
+    
+    if total_score < threshold:
+        return jsonify({'error': "Package is not uploaded due to the disqualified rating."}), 424 
+
+    sql = "SELECT COUNT(*) FROM packages WHERE url=%s AND version=%s"
+    val = (url, version)
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchone()
+
+    if result[0] > 0:
+        # package already exists, return an error response
+        return jsonify({'error': 'Package exists already.'}), 424
 
     sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score]
