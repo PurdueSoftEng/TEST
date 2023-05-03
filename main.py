@@ -2,6 +2,17 @@ import pymysql
 import os
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
+from google.cloud import logging
+
+# Instantiates a client
+client = logging.Client()
+
+# Retrieves a Cloud Run logging handler and sets the name of the service
+handler = client.get_default_handler()
+handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
+cloud_run_logger = logging.getLogger('cloud_logger')
+cloud_run_logger.addHandler(handler)
+cloud_run_logger.setLevel(logging.INFO)
 
 app = Flask(__name__)
 
@@ -60,6 +71,7 @@ def add_table():
 
 @app.route('/')
 def hello_world():
+    cloud_run_logger.info('Hello, world!')
     name = request.args.get('name', 'World')
     return f'Howdy {name}!'
 
@@ -129,6 +141,8 @@ def PackageCreate():
     # );
 
     request_body = request.json
+
+    cloud_run_logger.info('Request: ', request_body)
 
     #if (('Content' or 'URL') not in request_body) or ('Content' and 'URL' in request_body):
     if ((request_body['URL'] == None) and (request_body['Content'] == None)) or (request_body['URL'] != None) and (request_body['Content'] != None):
