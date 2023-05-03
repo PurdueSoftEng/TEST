@@ -166,7 +166,7 @@ def PackageCreate():
     metric_four = 0
     metric_five = 0
     metric_six = 0
-    metric_seven = 0
+    metric_seven = 0.6
     total_score = 0.6
 
     
