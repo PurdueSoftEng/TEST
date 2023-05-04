@@ -209,16 +209,9 @@ def PackageCreate():
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    logger.info(f"Result: {result}... {url}... {version}")
-    logger.info(f"Result: {result['COUNT(*)']}")
-    logger.info(f"Result: {list(result.values())[0]}")
-
-
-    # logger.debug(f"Result: {result[0]}")
-
-    # if result is not None:
-    #     # package already exists, return an error response
-    #     return jsonify({'error': 'Package exists already.'}), 409
+    if list(result.values())[0] > 0:
+        # package already exists, return an error response
+        return jsonify({'error': 'Package exists already.'}), 409
 
     sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score]
