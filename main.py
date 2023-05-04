@@ -175,8 +175,9 @@ def PackagesList():
     
     return response, 200
 
-@app.route('/package/byName/{name}', methods=['DELETE'])
-def PackageByNameDelete(name):
+@app.route('/package/byName', methods=['DELETE'])
+def PackageByNameDelete():
+    name = request.args.get('name')
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
