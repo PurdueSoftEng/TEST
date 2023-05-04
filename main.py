@@ -108,6 +108,7 @@ def reset():
         cursor.execute("SHOW TABLES")
         tables = cursor.fetchall()
     
+    tables = tables.json
     logger.info(tables)
 
     if not tables:
@@ -210,7 +211,9 @@ def PackageCreate():
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
         result = cursor.fetchone()
-        logger.debug(f"Result: {result}")
+
+    result = result.json
+    logger.debug(f"Result: {result}")
 
     if result is not None and result[0] > 0:
         # package already exists, return an error response
