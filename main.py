@@ -108,13 +108,19 @@ def reset():
         cursor.execute("SHOW TABLES")
         tables = cursor.fetchall()
 
-        # For each table, drop it and recreate it with the original schema
-        for table in tables:
-            table_name = table[0]
-            cursor.execute(f"DROP TABLE {table_name}")
-            cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
-    
-    return jsonify({'message': 'Registry is reset.'}), 200
+    if not tables:
+        # Return a response indicating that there are no tables to reset
+        return jsonify({'message': 'There are no tables to reset.'}), 200
+
+    # For each table, drop it and recreate it with the original schema
+    for table in tables:
+        table_name = table[0]
+        cursor.execute(f"DROP TABLE {table_name}")
+        cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
+
+    # Return a response indicating that the tables have been reset
+    return jsonify({'message': 'All tables have been reset.'}), 200
+
 
 # @app.route('/packages', methods=['POST'])
 # def packages_list():
@@ -202,6 +208,7 @@ def PackageCreate():
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
         result = cursor.fetchone()
+        logger.debug(f"Result: {result}")
 
     if result and result[0] > 0:
         # package already exists, return an error response
