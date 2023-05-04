@@ -147,7 +147,7 @@ def PackagesList():
         
     # Mock database query
     results = []
-    if packageName is not '*':
+    if packageName != '*':
         sql = "SELECT * FROM packages WHERE package_name=%s"
         if version is not None:
             sql += " AND version=%s"
@@ -156,6 +156,7 @@ def PackagesList():
             val = (packageName,)
     else:
         sql = "SELECT * FROM"
+        val = ()
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
