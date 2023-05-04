@@ -159,7 +159,7 @@ def PackagesList():
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    if list(result.values())[0] > 0:
+    if list(result.values())[0] is not None:
         logger.info(f"Result: {result}")
         results.append(result.values())
     
