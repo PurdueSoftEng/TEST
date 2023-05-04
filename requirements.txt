@@ -5,3 +5,4 @@ requests
 sqlalchemy
 google-cloud-logging
 metricslib-0.1.0-cp37-abi3-manylinux_2_34_x86_64.whl
+flask-cors
