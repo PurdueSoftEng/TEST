@@ -209,8 +209,8 @@ def PackageCreate():
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    logger.debug(f"Result: {result}... {url}... {version}")
-    logger.debug(f"Result: {type(result)}")
+    logger.info(f"Result: {result}... {url}... {version}")
+    logger.info(f"Result: {type(result)}")
 
     # logger.debug(f"Result: {result[0]}")
 
