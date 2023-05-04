@@ -98,10 +98,25 @@ def hello_world():
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
-def authenticate():
+def CreateAuthToken():
     return jsonify({'message': 'This system does not support authentication.'}), 501
 
-# @app.route('/package', methods=['POST'])
+@app.route('/reset', methods=['DELETE'])
+def reset():
+    with conn.cursor() as cursor:
+        # Get a list of all the tables in the database
+        cursor.execute("SHOW TABLES")
+        tables = cursor.fetchall()
+
+        # For each table, drop it and recreate it with the original schema
+        for table in tables:
+            table_name = table[0]
+            cursor.execute(f"DROP TABLE {table_name}")
+            cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
+    
+    return jsonify({'message': 'Registry is reset.'}), 200
+
+# @app.route('/packages', methods=['POST'])
 # def packages_list():
 #     # Parse request body
 #     package_queries = request.json
@@ -168,7 +183,6 @@ def PackageCreate():
     metric_six = 0
     metric_seven = 0.6
     total_score = 0.6
-
     
     id = package_name + version
     content = "base64-encoded package contents" #TODO update this with a content scraping program
@@ -185,9 +199,13 @@ def PackageCreate():
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    if result[0] > 0:
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchone()
+
+    if result and result[0] > 0:
         # package already exists, return an error response
-        return jsonify({'error': 'Package exists already.'}), 424
+        return jsonify({'error': 'Package exists already.'}), 409
 
     sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score]
