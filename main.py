@@ -3,11 +3,14 @@ import os
 import logging
 import json
 import re
+import metricslib
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
+
+data = metricslib.calcscore_py("url")
 
 client = glogging.Client()
 
@@ -21,6 +24,9 @@ logger.addHandler(handler)
 logger.info("This is an info message")
 logger.warning("This is a warning message")
 logger.error("This is an error message")
+
+logger.info("data: ", data)
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
