@@ -109,7 +109,6 @@ def reset():
         tables = cursor.fetchall()
     
     logger.info(f"Tables: {tables}")
-    logger.info(f"ListValues: {list(tables.values())}")
 
     if not tables:
         # Return a response indicating that there are no tables to reset
