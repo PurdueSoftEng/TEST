@@ -5,6 +5,7 @@ import json
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 
 client = glogging.Client()
@@ -21,6 +22,7 @@ logger.warning("This is a warning message")
 logger.error("This is an error message")
 
 app = Flask(__name__)
+CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
 
 # Configure database connection settings
 db_user = 'root'
@@ -101,6 +103,7 @@ def CreateAuthToken():
     return jsonify({'message': 'This system does not support authentication.'}), 501
 
 @app.route('/reset', methods=['DELETE'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def reset():
     with conn.cursor() as cursor:
             # Get a list of all the tables in the database
