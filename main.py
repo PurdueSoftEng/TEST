@@ -210,8 +210,8 @@ def PackageCreate():
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    logger.debug(f"Result: {result}")
-    logger.debug(f"Result: {result[0]}")
+    # logger.debug(f"Result: {result}")
+    # logger.debug(f"Result: {result[0]}")
 
     # if result is not None:
     #     # package already exists, return an error response
