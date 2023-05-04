@@ -161,6 +161,8 @@ def PackagesList():
             cursor.execute(sql, val)
 
         results = cursor.fetchall()
+
+    logger.info(results)
     
     # Generate response
     packageMetadata = jsonify(results)
