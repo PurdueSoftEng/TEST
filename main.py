@@ -148,7 +148,7 @@ def PackagesList():
     # Mock database query
     results = []
 
-    sql = "SELECT * FROM packages WHERE name=%s"
+    sql = "SELECT * FROM packages WHERE package_name=%s"
     if version is not None:
         sql += " AND version=%s"
         val = (packageName, version)
