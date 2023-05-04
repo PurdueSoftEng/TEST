@@ -5,6 +5,7 @@ import json
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 
 client = glogging.Client()
@@ -21,6 +22,7 @@ logger.warning("This is a warning message")
 logger.error("This is an error message")
 
 app = Flask(__name__)
+CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
 
 # Configure database connection settings
 db_user = 'root'
@@ -63,8 +65,8 @@ packages_table = Table('packages', metadata,
                        Column('metric_six', Float),
                        Column('metric_seven', Float),
                        Column('total_score', Float),
+                       Column('id', String),
                        )
-
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
@@ -91,6 +93,12 @@ def add_table():
 
     return jsonify({'message': 'Table added successfully!'})
 
+@app.route('/package/byRegEx', methods=['POST'])
+def PackageByRegExGet():
+
+
+    return jsonify({'message': 'Table added successfully!'})
+
 @app.route('/')
 def hello_world():
     logger.debug('Hello, world!')
@@ -103,6 +111,7 @@ def CreateAuthToken():
     return jsonify({'message': 'This system does not support authentication.'}), 501
 
 @app.route('/reset', methods=['DELETE'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def reset():
     with conn.cursor() as cursor:
             # Get a list of all the tables in the database
@@ -163,18 +172,42 @@ def PackagesList():
             cursor.execute(sql, val)
 
         results = cursor.fetchall()
+
+    package_queries = []
+    name = {}
+
+    for item in results:
+        for field in item.items():
+            if field[0] == 'package_name':
+                name = {
+                        "PackageName": field[1]
+                    }
+            if field[0] == 'version':
+                version = field[1]
+
+        if version:
+            package_query = {
+                "Name": name,
+                "Version": version
+            }
+        else:
+            package_query = {
+                "Name": name,
+            }
+        
+        package_queries.append(package_query)
     
     # Generate response
-    response = jsonify(results)
-    response.headers.add('total_count', str(len(results)))  # set total count in response header
-    response.headers.add('page_count', str(page_num + 1))  # set next page number in response header
+    total_package_query = jsonify(package_queries)
+    total_package_query.headers.add('total_count', str(len(results)))  # set total count in response header
+    total_package_query.headers.add('page_count', str(page_num + 1))  # set next page number in response header
     
     # Check for too many results
     max_results = 1000
     if len(results) > max_results:
         return jsonify({'error': "Too many packages returned."}), 413
     
-    return response, 200
+    return total_package_query, 200
 
 @app.route('/package/byName/<name>', methods=['DELETE'])
 def PackageByNameDelete(name):
@@ -198,6 +231,42 @@ def PackageByNameDelete(name):
 
     return jsonify({'message': "Package is deleted."}), 200
 
+@app.route('/package/byName', methods=['GET'])
+def PackageByNameGet():
+    name = request.args.get('name')
+    if name is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+    
+    with conn.cursor() as cursor:
+        sql = "SELECT * FROM packages WHERE package_name=%s"
+        val = [name]
+        cursor.execute(sql, val)
+
+        packages = cursor.fetchall()
+        if len(packages) == 0:
+            return jsonify({'error': "No such package."}), 404
+
+    version = "1.2.3"
+    content = "tempcontentstring"
+    jsprogram = "testprogram"
+    url = ""
+    package_history = {
+        "PackageMetadata": {
+            "Name": name,
+            "Version": version,
+            "ID": id
+        },
+        "PackageData": {
+            "Content": content,
+            "URL": url,
+            "JSProgram": jsprogram
+        }
+    }
+
+    json_data = json.dumps(package_history)
+    return package_history, 200
+
 @app.route('/package', methods=['POST'])
 def PackageCreate():
     # Add package to database
@@ -218,6 +287,7 @@ def PackageCreate():
         jsprogram = request_body['JSProgram']
     else:
         jsprogram = ''
+
     if ('Content' in request_body):
         content = request_body['Content']
     else:
@@ -232,8 +302,9 @@ def PackageCreate():
     metric_seven = 0.6
     total_score = 0.6
     
-    id = package_name + version
+    pakcage_id = package_name + version
     content = "base64-encoded package contents" #TODO update this with a content scraping program
+    id = "id"  #TODO update this metrics
 
     threshold = 0.1
     
@@ -251,8 +322,8 @@ def PackageCreate():
         # package already exists, return an error response
         return jsonify({'error': 'Package exists already.'}), 409
 
-    sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score]
+    sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score, id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score, id]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
