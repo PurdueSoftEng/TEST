@@ -142,40 +142,37 @@ def PackagesList():
             \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
     packageName = package_queries['Name']
+    
     # Check for pagination offset
-    offset = request.args.get('offset', 0)
+    page_size = 10
+    page_num = int(request.args.get('page', 0))
+    offset = page_num * page_size
         
-    # Mock database query
     with conn.cursor() as cursor:
-
-        results = []
         if packageName != '*':
             sql = "SELECT * FROM packages WHERE package_name=%s"
+            val = [packageName]
             if version is not None:
                 sql += " AND version=%s"
-                val = (packageName, version)
-                cursor.execute(sql, val)
-            else:
-                val = (packageName,)
-                cursor.execute(sql, val)
+                val.append(version)
+            sql += " LIMIT %s OFFSET %s"
+            val.extend([page_size, offset])
+            cursor.execute(sql, val)
         else:
-            sql = "SELECT * FROM"
+            sql = "SELECT * FROM packages LIMIT %s OFFSET %s"
+            val = [page_size, offset]
+            cursor.execute(sql, val)
 
-        result = cursor.fetchone()
-
-    if result is not None:
-        packages = list(result.values())[0]
-        logger.info(f"Result: {result}")
-        results.append(result.values())
-    
-    # Apply pagination
-    paginated_results = results[int(offset):int(offset)+10]  # limit to 10 results per page
+        results = cursor.fetchall()
+        logger.info(f"Results: {results}")
     
     # Generate response
-    response = jsonify(paginated_results)
-    response.headers.add('offset', str(int(offset)+10))  # set next page offset in response header
+    response = jsonify(results)
+    response.headers.add('total_count', str(len(results)))  # set total count in response header
+    response.headers.add('page_count', str(page_num + 1))  # set next page number in response header
     
     return response, 200
+
 
 @app.route('/package', methods=['POST'])
 def PackageCreate():
