@@ -147,19 +147,22 @@ def PackagesList():
         
     # Mock database query
     results = []
-
-    sql = "SELECT * FROM packages WHERE package_name=%s"
-    if version is not None:
-        sql += " AND version=%s"
-        val = (packageName, version)
+    if packageName is not '*':
+        sql = "SELECT * FROM packages WHERE package_name=%s"
+        if version is not None:
+            sql += " AND version=%s"
+            val = (packageName, version)
+        else:
+            val = (packageName,)
     else:
-        val = (packageName,)
+        sql = "SELECT * FROM"
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    if list(result.values())[0] is not None:
+    if result is not None:
+        packages = list(result.values())[0]
         logger.info(f"Result: {result}")
         results.append(result.values())
     
