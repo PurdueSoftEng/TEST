@@ -2,11 +2,15 @@ import pymysql
 import os
 import logging
 import json
+import re
+import metricslib
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
+
+data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
 
 client = glogging.Client()
 
@@ -20,6 +24,9 @@ logger.addHandler(handler)
 logger.info("This is an info message")
 logger.warning("This is a warning message")
 logger.error("This is an error message")
+
+logger.info("data: ", data)
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
@@ -95,6 +102,23 @@ def add_table():
 
 @app.route('/package/byRegEx', methods=['POST'])
 def PackageByRegExGet():
+    package_queries = request.json
+
+    if 'RegEx' not in package_queries:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+    else:
+        regex = package_queries["RegEx"]
+
+    try:
+        re.compile(regex)
+        print("Valid regex!")
+    except re.error:
+        print("Invalid regex!")
+    
+    
+    logger.info("Regex: ", regex)
+
 
 
     return jsonify({'message': 'Table added successfully!'})
