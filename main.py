@@ -211,7 +211,7 @@ def PackageCreate():
     
     url = request_body['URL']
     version = "1.0.0" # TODO: change this to use the library to get the version
-    package_name = 'test' # TODO: change this to use the library to get the name
+    package_name = 'temp' # TODO: change this to use the library to get the name
     if ('JSProgram' in request_body):
         jsprogram = request_body['JSProgram']
     else:
