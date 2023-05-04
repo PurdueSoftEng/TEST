@@ -168,7 +168,8 @@ def PackagesList():
 
     logger.info(f"Results: {results}")
 
-    # for item in results:
+    for item in results:
+        logger.info(f'item: {item}')
     #     for field in list(item.values()):
     #         logger.info('field: ', str(field))
     
