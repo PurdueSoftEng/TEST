@@ -169,8 +169,8 @@ def PackagesList():
 
     for item in results:
         logger.info(f'item: {item}')
-        for field in item:
-            logger.info(f'field: {field}')
+        # for field in item:
+        #     logger.info(f'field: {field}')
     
     # Generate response
     packageMetadata = jsonify(results)
@@ -212,6 +212,15 @@ def PackageByNameGet():
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+    
+    with conn.cursor() as cursor:
+        sql = "SELECT * FROM packages WHERE package_name=%s"
+        val = [name]
+        cursor.execute(sql, val)
+
+        packages = cursor.fetchall()
+        if len(packages) == 0:
+            return jsonify({'error': "No such package."}), 404
 
     version = "1.2.3"
     content = "tempcontentstring"
