@@ -166,7 +166,7 @@ def PackagesList():
 
         results = cursor.fetchall()
 
-    logger.info("Results: ", results)
+    logger.info(f"Results: {results}")
 
     # for item in results:
     #     for field in list(item.values()):
