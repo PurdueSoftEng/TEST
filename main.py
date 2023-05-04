@@ -197,7 +197,7 @@ def PackageByNameDelete():
     return jsonify({'message': "Package is deleted."}), 200
 
 @app.route('/package/byName', methods=['GET'])
-def PackageByNameDelete():
+def PackageByNameGet():
     name = request.args.get('name')
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
