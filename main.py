@@ -108,10 +108,9 @@ def reset():
         cursor.execute("SHOW TABLES")
         tables = cursor.fetchall()
     
-    tables = tables.json
-    logger.info(table[0])
-    logger.info(table[0][0])
-
+    logger.info("Tables: {tables}")
+    logger.info('Table[0]: {table[0]}')
+    logger.info('Type tables: {type(tables)}')
 
     if not tables:
         # Return a response indicating that there are no tables to reset
