@@ -117,7 +117,7 @@ def reset():
 
     # For each table, drop it and recreate it with the original schema
     
-    for table in list(tables.values()):
+    for table in tables:
         table_name = table
         logger.info(f"Table: {table}")
         logger.info(f"Table_name: {table_name}")
