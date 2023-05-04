@@ -103,6 +103,7 @@ def PackageByRegExGet():
 def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
+    #metricslib.calcscore_py("https://github.com/cloudinary/cloudinary_npm")
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
@@ -208,9 +209,9 @@ def PackagesList():
     
     return total_package_query, 200
 
-@app.route('/package/byName', methods=['DELETE'])
-def PackageByNameDelete():
-    name = request.args.get('name')
+@app.route('/package/byName/<name>', methods=['DELETE'])
+def PackageByNameDelete(name):
+    #name = request.args.get('name')
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -345,5 +346,110 @@ def PackageCreate():
 
     return json_data, 201
 
+@app.route('/package/<id_path>', methods=['GET'])
+def PackageGetter(id_path):
+    if id_path is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+
+    sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
+    val = [id_path]
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchone()
+
+    if list(result.values())[0] == 0:
+        return jsonify({'error': 'Package does not exist.'}), 404
+
+    sql = "SELECT id, package_name, version, content, url, jsprogram FROM packages WHERE id=%s"
+    val = [id_path]
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchall()
+
+    vec = ()
+
+    for row in result:
+        id = result[0]
+        package_name = result[1]
+        version = result[2]
+        content = result[3]
+        url = result[4]
+        jsprogram = result[5]
+
+        package_data = {
+            "metadata": {
+                "Name": package_name,
+                "Version": version,
+                "ID": id
+            },
+            "data": {
+                "Content": content,
+                "URL": url,
+                "JSProgram": jsprogram
+            }
+        }
+        vec.append(package_data)
+
+    json_data = json.dumps([ob.__dict__ for ob in vec])
+
+    return json_data, 200
+
+@app.route('/package/<id_path>', methods=['PUT'])
+def PackageSetter(id_path):
+
+    request_body = request.json
+
+    if ('Name' not in request_body) or ((request_body['Name'] == None) and ('ID' not in request_body)) or ((request_body['ID'] != None) and ('Version' not in request_body)) and (request_body['Version'] not in request_body):
+        return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
+    
+    id = request_body['ID']
+    version = request_body['Version']
+    package_name = request_body['Name']
+
+    sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
+    val = [id_path]
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchone()
+
+    if list(result.values())[0] == 0:
+        return jsonify({'error': 'Package does not exist.'}), 404
+
+    sql = "UPDATE packages SET package_id=%s package_name=%s version=%s WHERE id=%s"
+    val = [id, package_name, version, id_path]
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        conn.commit()
+
+    return jsonify({'message': "Version is updated."}), 200
+
+
+@app.route('/package/<id_path>', methods=['DELETE'])
+def PackageDelete(id_path):    
+    if id_path is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+
+    with conn.cursor() as cursor:
+        sql = "SELECT * FROM packages WHERE id=%s"
+        val = [id_path]
+        cursor.execute(sql, val)
+
+        packages = cursor.fetchall()
+        if len(packages) == 0:
+            return jsonify({'error': "Package does not exist."}), 404
+        else:
+            sql = "DELETE FROM packages WHERE id=%s"
+            cursor.execute(sql, val)
+            conn.commit()
+
+    return jsonify({'message': "Package is deleted."}), 200
+
+    
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
