@@ -109,16 +109,19 @@ def reset():
         tables = cursor.fetchall()
     
     logger.info(f"Tables: {tables}")
-    logger.info(f'Table[0]: {table[0]}')
-    logger.info(f'Type tables: {type(tables)}')
 
     if not tables:
         # Return a response indicating that there are no tables to reset
         return jsonify({'message': 'There are no tables to reset.'}), 200
 
     # For each table, drop it and recreate it with the original schema
-    for table in tables:
-        table_name = table[0]
+    
+    for table in list(tables.values()):
+        table_name = table
+        logger.info(f"Table: {table}")
+        logger.info(f"Table_name: {table_name}")
+
+        table_name = ""
         cursor.execute(f"DROP TABLE {table_name}")
         cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
 
