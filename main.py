@@ -130,7 +130,7 @@ def PackagesList():
     package_queries = request.json
 
     logger.info(f'package_queries: {package_queries}')
-    logger.info(f'package_queries values: {package_queries.values()}')
+    logger.info(f'package_queries list values: {list(package_queries.values())}')
 
     for query in package_queries:
         if 'Version' in query:
@@ -139,7 +139,7 @@ def PackagesList():
             return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
             \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
-    packageName = query['Name']
+    packageName = package_queries['Name']
     # Check for pagination offset
     offset = request.args.get('offset', 0)
         
