@@ -170,9 +170,9 @@ def PackagesList():
 
     for item in results:
         logger.info(f'item: {item}')
-        
-        for field in list(item.values()):
-            logger.info('field: ', str(field))
+
+        for field in list(item.items()):
+            logger.info('field: ', field)
     
     # Generate response
     packageMetadata = jsonify(results)
