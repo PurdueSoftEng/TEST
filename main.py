@@ -65,7 +65,6 @@ packages_table = Table('packages', metadata,
                        Column('total_score', Float),
                        )
 
-
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
 def create_table():
@@ -164,16 +163,16 @@ def PackagesList():
         results = cursor.fetchall()
     
     # Generate response
-    response = jsonify(results)
-    response.headers.add('total_count', str(len(results)))  # set total count in response header
-    response.headers.add('page_count', str(page_num + 1))  # set next page number in response header
+    packageMetadata = jsonify(results)
+    packageMetadata.headers.add('total_count', str(len(results)))  # set total count in response header
+    packageMetadata.headers.add('page_count', str(page_num + 1))  # set next page number in response header
     
     # Check for too many results
     max_results = 1000
     if len(results) > max_results:
         return jsonify({'error': "Too many packages returned."}), 413
     
-    return response, 200
+    return packageMetadata, 200
 
 @app.route('/package/byName', methods=['DELETE'])
 def PackageByNameDelete():
@@ -197,6 +196,33 @@ def PackageByNameDelete():
 
     return jsonify({'message': "Package is deleted."}), 200
 
+@app.route('/package/byName', methods=['GET'])
+def PackageByNameDelete():
+    name = request.args.get('name')
+    if name is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+
+    version = "1.2.3"
+    content = "tempcontentstring"
+    jsprogram = "testprogram"
+    url = ""
+    package_history = {
+        "PackageMetadata": {
+            "Name": name,
+            "Version": version,
+            "ID": id
+        },
+        "PackageData": {
+            "Content": content,
+            "URL": url,
+            "JSProgram": jsprogram
+        }
+    }
+
+    json_data = json.dumps(package_history)
+    return package_history, 200
+
 @app.route('/package', methods=['POST'])
 def PackageCreate():
     # Add package to database
@@ -217,6 +243,7 @@ def PackageCreate():
         jsprogram = request_body['JSProgram']
     else:
         jsprogram = ''
+
     if ('Content' in request_body):
         content = request_body['Content']
     else:
