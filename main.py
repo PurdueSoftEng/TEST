@@ -210,10 +210,6 @@ def PackageCreate():
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    with conn.cursor() as cursor:
-        cursor.execute(sql, val)
-        result = cursor.fetchone()
-
     logger.debug(f"Result: {result}")
 
     if result is not None:
