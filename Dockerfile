@@ -11,9 +11,9 @@ ADD . ./
 
 RUN pip3 install -r requirements.txt
 
-COPY . /src
+COPY . /root
 
-WORKDIR /src
+WORKDIR /root
 
 ENV GITHUB_TOKEN $GITHUB_TOKEN
 
