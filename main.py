@@ -128,14 +128,15 @@ def reset():
 def PackagesList():
     # Parse request body
     package_queries = request.json
-    version = None
 
-    for query in package_queries:
-        if 'Version' in query:
-            version = package_queries['Version']
-        if 'Name' not in query:
-            return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
-            \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+    if 'Version' in package_queries:
+        version = package_queries['Version']
+    else:
+        version = None
+
+    if 'Name' not in package_queries:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
     packageName = package_queries['Name']
     
