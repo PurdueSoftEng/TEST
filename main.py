@@ -119,7 +119,8 @@ def reset():
     for table in tables:
         table_name = table
         logger.info(f"Table: {table}")
-        logger.info(f"Table_name: {table_name}")
+        logger.info(f"Table: {table.values()}")
+        logger.info(f"Table_name: {list(table.values())[0]}")
 
         table_name = ""
         cursor.execute(f"DROP TABLE {table_name}")
@@ -129,38 +130,39 @@ def reset():
     return jsonify({'message': 'All tables have been reset.'}), 200
 
 
-# @app.route('/packages', methods=['POST'])
-# def packages_list():
-#     # Parse request body
-#     package_queries = request.json
+@app.route('/packages', methods=['POST'])
+def PackagesList():
+    # Parse request body
+    package_queries = request.json
 
-#     for query in package_queries:
-#         if 'Name' not in query:
-#             return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
-#             \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+    for query in package_queries:
+        if 'Name' not in query:
+            return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+            \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
-#     # Check for pagination offset
-#     offset = request.args.get('offset', 0)
+    packageName = query['Name']
+    # Check for pagination offset
+    offset = request.args.get('offset', 0)
 
-#     print("offset ", offset)
+    print("offset ", offset)
         
-#     # Mock database query
-#     results = []
+    # Mock database query
+    results = []
 
-#     for package in PACKAGES:
-#         for query in package_queries:
-#             print(query)
-#             if query == '*' or query == package['Name']:
-#                 results.append(package)
+    for package in packages_table:
+        for query in package_queries:
+            logger.info(f'query: {query}')
+            if query == '*' or query == package['Name']:
+                results.append(package)
     
-#     # Apply pagination
-#     paginated_results = results[int(offset):int(offset)+10]  # limit to 10 results per page
+    # Apply pagination
+    paginated_results = results[int(offset):int(offset)+10]  # limit to 10 results per page
     
-#     # Generate response
-#     response = jsonify(paginated_results)
-#     response.headers.add('offset', str(int(offset)+10))  # set next page offset in response header
+    # Generate response
+    response = jsonify(paginated_results)
+    response.headers.add('offset', str(int(offset)+10))  # set next page offset in response header
     
-#     return response, 200
+    return response, 200
 
 @app.route('/package', methods=['POST'])
 def PackageCreate():
