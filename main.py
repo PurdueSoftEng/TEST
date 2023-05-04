@@ -167,25 +167,39 @@ def PackagesList():
         results = cursor.fetchall()
 
     logger.info(f"Results: {results}")
+    packages = []
 
     for item in results:
-        logger.info(f'item: {item}')
-        logger.info(f'type item: {type(item)}')
-
         for field in item.items():
             logger.info('field[0]: %s', field[0])
+            if field[0] == 'name':
+                name = {
+                        "name": field[1]
+                    }
+            if field[0] == 'version':
+                version = field[1]
+
+        if version:
+            package_query = {
+                "Name": name,
+                "Version": version
+            }
+        else:
+            package_query = {
+                "Name": name,
+            }
     
     # Generate response
     packageMetadata = jsonify(results)
-    packageMetadata.headers.add('total_count', str(len(results)))  # set total count in response header
-    packageMetadata.headers.add('page_count', str(page_num + 1))  # set next page number in response header
+    package_query.headers.add('total_count', str(len(results)))  # set total count in response header
+    package_query.headers.add('page_count', str(page_num + 1))  # set next page number in response header
     
     # Check for too many results
     max_results = 1000
     if len(results) > max_results:
         return jsonify({'error': "Too many packages returned."}), 413
     
-    return packageMetadata, 200
+    return package_query, 200
 
 @app.route('/package/byName', methods=['DELETE'])
 def PackageByNameDelete():
