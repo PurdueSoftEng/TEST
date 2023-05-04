@@ -179,7 +179,7 @@ def PackagesList():
         for field in item.items():
             if field[0] == 'package_name':
                 name = {
-                        "name": field[1]
+                        "PackageName": field[1]
                     }
             if field[0] == 'version':
                 version = field[1]
