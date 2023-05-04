@@ -107,6 +107,8 @@ def reset():
         # Get a list of all the tables in the database
         cursor.execute("SHOW TABLES")
         tables = cursor.fetchall()
+    
+    logger.info(tables)
 
     if not tables:
         # Return a response indicating that there are no tables to reset
@@ -210,7 +212,7 @@ def PackageCreate():
         result = cursor.fetchone()
         logger.debug(f"Result: {result}")
 
-    if result and result[0] > 0:
+    if result is not None and result[0] > 0:
         # package already exists, return an error response
         return jsonify({'error': 'Package exists already.'}), 409
 
