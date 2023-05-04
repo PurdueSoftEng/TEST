@@ -146,20 +146,21 @@ def PackagesList():
     offset = request.args.get('offset', 0)
         
     # Mock database query
-    results = []
-    if packageName != '*':
-        sql = "SELECT * FROM packages WHERE package_name=%s"
-        if version is not None:
-            sql += " AND version=%s"
-            val = (packageName, version)
-        else:
-            val = (packageName,)
-    else:
-        sql = "SELECT * FROM"
-        val = ()
-
     with conn.cursor() as cursor:
-        cursor.execute(sql, val)
+
+        results = []
+        if packageName != '*':
+            sql = "SELECT * FROM packages WHERE package_name=%s"
+            if version is not None:
+                sql += " AND version=%s"
+                val = (packageName, version)
+                cursor.execute(sql, val)
+            else:
+                val = (packageName,)
+                cursor.execute(sql, val)
+        else:
+            sql = "SELECT * FROM"
+
         result = cursor.fetchone()
 
     if result is not None:
