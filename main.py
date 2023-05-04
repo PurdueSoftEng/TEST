@@ -210,7 +210,7 @@ def PackageCreate():
         result = cursor.fetchone()
 
     logger.info(f"Result: {result}... {url}... {version}")
-    logger.info(f"Result: {type(result)}")
+    logger.info(f"Result: {result['COUNT (*)']}")
 
     # logger.debug(f"Result: {result[0]}")
 
