@@ -167,7 +167,7 @@ def PackagesList():
         results = cursor.fetchall()
 
     logger.info(f"Results: {results}")
-    packages = []
+    package_queries = []
 
     for item in results:
         for field in item.items():
@@ -188,18 +188,20 @@ def PackagesList():
             package_query = {
                 "Name": name,
             }
+        
+        package_queries.append(package_query)
     
     # Generate response
-    packageMetadata = jsonify(results)
-    package_query.headers.add('total_count', str(len(results)))  # set total count in response header
-    package_query.headers.add('page_count', str(page_num + 1))  # set next page number in response header
+    total_package_query = jsonify(package_queries)
+    total_package_query.headers.add('total_count', str(len(results)))  # set total count in response header
+    total_package_query.headers.add('page_count', str(page_num + 1))  # set next page number in response header
     
     # Check for too many results
     max_results = 1000
     if len(results) > max_results:
         return jsonify({'error': "Too many packages returned."}), 413
     
-    return package_query, 200
+    return total_package_query, 200
 
 @app.route('/package/byName', methods=['DELETE'])
 def PackageByNameDelete():
