@@ -274,5 +274,50 @@ def PackageCreate():
 
     return json_data, 201
 
+@app.route('/package/<id_path>', methods=['GET'])
+def PackageGetter(id_path):
+    sql = "SELECT * FROM packages WHERE id=%s"
+    val = [id_path]
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchall()
+        
+
+    package_data = {
+        "metadata": {
+            "Name": package_name,
+            "Version": version,
+            "ID": id
+        },
+        "data": {
+            "Content": content,
+            "URL": url,
+            "JSProgram": jsprogram
+        }
+    }
+
+@app.route('/package/<id_path>', methods=['PUT'])
+def PackageSetter(id_path):
+    sql = "UPDATE packages SET id=%s package_name=%s version=%s WHERE id=%s"
+    val = [id, package_name, version, id_path]
+
+    request_body = request.json
+
+    if ('Name' not in request_body) or ((request_body['Name'] == None) and ('Id' not in request_body)) or ((request_body['Id'] != None) and ('Version' not in request_body)) and (request_body['Version'] not in request_body):
+        return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
+    
+    
+    
+    id = request_body['Id']
+    version = request_body['Version']
+    package_name = request_body['Name']
+
+
+@app.route('/package/<id_path>', methods=['DELETE'])
+def PackageDelete(id_path):
+    sql = "DELETE FROM packages WHERE id=%s"
+    val = [id_path]
+
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
