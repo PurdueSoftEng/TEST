@@ -165,12 +165,10 @@ def PackagesList():
 
         results = cursor.fetchall()
 
-    results = results.json
     logger.info("Results: ", results)
 
     for item in results:
-        logger.info('item: ', item)
-        for field in item:
+        for field in list(item.values()):
             logger.info('field: ', field)
     
     # Generate response
