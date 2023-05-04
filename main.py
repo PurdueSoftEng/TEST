@@ -172,14 +172,12 @@ def PackagesList():
 
         results = cursor.fetchall()
 
-    logger.info(f"Results: {results}")
     package_queries = []
     name = {}
 
     for item in results:
         for field in item.items():
-            logger.info('field[0]: %s', field[0])
-            if field[0] == 'name':
+            if field[0] == 'package_name':
                 name = {
                         "name": field[1]
                     }
