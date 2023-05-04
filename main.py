@@ -10,7 +10,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 
-data = metricslib.calcscore_py("url")
+data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
 
 client = glogging.Client()
 
