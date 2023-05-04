@@ -128,11 +128,7 @@ def reset():
 def PackagesList():
     # Parse request body
     package_queries = request.json
-
     version = None
-
-    logger.info(f'package_queries: {package_queries}')
-    logger.info(f'package_queries list values: {list(package_queries.values())}')
 
     for query in package_queries:
         if 'Version' in query:
@@ -157,6 +153,7 @@ def PackagesList():
                 val.append(version)
             sql += " LIMIT %s OFFSET %s"
             val.extend([page_size, offset])
+            logger.info(f"sql: {sql}")
             cursor.execute(sql, val)
         else:
             sql = "SELECT * FROM packages LIMIT %s OFFSET %s"
