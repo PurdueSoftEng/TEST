@@ -95,6 +95,7 @@ def add_table():
 def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
+    #metricslib.calcscore_py("https://github.com/cloudinary/cloudinary_npm")
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
@@ -276,35 +277,52 @@ def PackageCreate():
 
 @app.route('/package/<id_path>', methods=['GET'])
 def PackageGetter(id_path):
+    if id_path is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+
+    sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
+    val = [id_path]
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchone()
+
+    if list(result.values())[0] == 0:
+        return jsonify({'error': 'Package does not exist.'}), 404
+
     sql = "SELECT id, package_name, version, content, url, jsprogram FROM packages WHERE id=%s"
     val = [id_path]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
         result = cursor.fetchall()
-        return_list = list(result.values())
 
-    id = result[0]
-    package_name = result[1]
-    version = result[2]
-    content = result[3]
-    url = result[4]
-    jsprogram = result[5]
+    vec = ()
 
-    package_data = {
-        "metadata": {
-            "Name": package_name,
-            "Version": version,
-            "ID": id
-        },
-        "data": {
-            "Content": content,
-            "URL": url,
-            "JSProgram": jsprogram
+    for row in result:
+        id = result[0]
+        package_name = result[1]
+        version = result[2]
+        content = result[3]
+        url = result[4]
+        jsprogram = result[5]
+
+        package_data = {
+            "metadata": {
+                "Name": package_name,
+                "Version": version,
+                "ID": id
+            },
+            "data": {
+                "Content": content,
+                "URL": url,
+                "JSProgram": jsprogram
+            }
         }
-    }
+        vec.append(package_data)
 
-    json_data = json.dumps(package_data)
+    json_data = json.dumps([ob.__dict__ for ob in vec])
 
     return json_data, 200
 
@@ -328,7 +346,6 @@ def PackageSetter(id_path):
         result = cursor.fetchone()
 
     if list(result.values())[0] == 0:
-        # package already exists, return an error response
         return jsonify({'error': 'Package does not exist.'}), 404
 
     sql = "UPDATE packages SET package_id=%s package_name=%s version=%s WHERE id=%s"
