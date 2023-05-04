@@ -93,6 +93,12 @@ def add_table():
 
     return jsonify({'message': 'Table added successfully!'})
 
+@app.route('/package/byRegEx', methods=['POST'])
+def PackageByRegExGet():
+
+
+    return jsonify({'message': 'Table added successfully!'})
+
 @app.route('/')
 def hello_world():
     logger.debug('Hello, world!')
@@ -168,6 +174,7 @@ def PackagesList():
 
     logger.info(f"Results: {results}")
     package_queries = []
+    name = {}
 
     for item in results:
         for field in item.items():
