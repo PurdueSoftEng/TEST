@@ -155,7 +155,6 @@ def PackagesList():
                 val.append(version)
             sql += " LIMIT %s OFFSET %s"
             val.extend([page_size, offset])
-            logger.info(f"sql: {sql}")
             cursor.execute(sql, val)
         else:
             sql = "SELECT * FROM packages LIMIT %s OFFSET %s"
@@ -163,7 +162,6 @@ def PackagesList():
             cursor.execute(sql, val)
 
         results = cursor.fetchall()
-        logger.info(f"Results: {results}")
     
     # Generate response
     response = jsonify(results)
@@ -176,6 +174,27 @@ def PackagesList():
         return jsonify({'error': "Too many packages returned."}), 413
     
     return response, 200
+
+@app.route('/package/byName/{name}', methods=['DELETE'])
+def PackageByNameDelete(name):
+    if name is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+
+    with conn.cursor() as cursor:
+        sql = "SELECT * FROM packages WHERE package_name=%s"
+        val = [name]
+        cursor.execute(sql, val)
+
+        packages = cursor.fetchall()
+        if len(packages) == 0:
+            return jsonify({'error': "Package does not exist."}), 404
+        else:
+            sql = "DELETE FROM packages WHERE package_name=%s"
+            cursor.execute(sql, val)
+            conn.commit()
+
+    return jsonify({'message': "Package is deleted."}), 200
 
 @app.route('/package', methods=['POST'])
 def PackageCreate():
