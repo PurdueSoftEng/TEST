@@ -164,7 +164,6 @@ def reset():
 def PackageCreate():
     # Add package to database
     request_body = request.json
-    logger.warning('Request: %s', json.dumps(request_body))
 
     if ('URL' not in request_body) or ((request_body['URL'] == None) and ('Content' not in request_body)) or ((request_body['URL'] != None) and ('Content' in request_body)):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
@@ -210,7 +209,9 @@ def PackageCreate():
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    # logger.debug(f"Result: {result}")
+    logger.debug(f"Result: {result}... {url}... {version}")
+    logger.debug(f"Result: {type(result)}")
+
     # logger.debug(f"Result: {result[0]}")
 
     # if result is not None:
