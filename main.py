@@ -118,11 +118,11 @@ def reset():
     
     for table in tables:
         table_name = table
-        logger.info(f"Table: {table}")
-        logger.info(f"Table: {table.values()}")
-        logger.info(f"Table_name: {list(table.values())[0]}")
+        # logger.info(f"Table: {table}")
+        # logger.info(f"Table: {table.values()}")
+        # logger.info(f"Table_name: {list(table.values())[0]}")
 
-        table_name = ""
+        table_name = list(table.values())[0]
         cursor.execute(f"DROP TABLE {table_name}")
         cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
 
