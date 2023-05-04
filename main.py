@@ -170,8 +170,10 @@ def PackagesList():
 
     for item in results:
         logger.info(f'item: {item}')
+        logger.info(f'type item: {type(item)}')
 
-        for field in list(item.items()):
+
+        for field in item.items():
             logger.info('field: ', field)
     
     # Generate response
