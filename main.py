@@ -132,16 +132,13 @@ def PackagesList():
     logger.info(f'package_queries: {package_queries}')
     logger.info(f'package_queries values: {package_queries.values()}')
 
-
     for query in package_queries:
         if 'Version' in query:
-            version = query['Version']
+            version = package_queries['Version']
         if 'Name' not in query:
             return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
             \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
-    logger.info(f'query: {query}')
-
     packageName = query['Name']
     # Check for pagination offset
     offset = request.args.get('offset', 0)
@@ -149,15 +146,20 @@ def PackagesList():
     # Mock database query
     results = []
 
-    for package in packages_table:
-        for query in package_queries:
-            logger.info(f'query: {query}')
-            if version is not None:
-                if query == '*' or query == package['Name']:
-                    results.append(package)
-            else:
-                if query == '*' or query == package['Name']:
-                    results.append(package)
+    sql = "SELECT * FROM packages WHERE name=%s"
+    if version is not None:
+        sql += " AND version=%s"
+        val = (packageName, version)
+    else:
+        val = (packageName,)
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchone()
+
+    if list(result.values())[0] > 0:
+        logger.info(f"Result: {result}")
+        results.append(result.values())
     
     # Apply pagination
     paginated_results = results[int(offset):int(offset)+10]  # limit to 10 results per page
