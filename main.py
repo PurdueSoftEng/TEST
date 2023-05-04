@@ -140,8 +140,9 @@ def PackagesList():
     
     packageName = package_queries['Name']
     
-    # Check for pagination offset
-    page_size = 10
+    # Check for pagination offset and limit
+    max_page_size = 100
+    page_size = min(int(request.args.get('page_size', 10)), max_page_size)
     page_num = int(request.args.get('page', 0))
     offset = page_num * page_size
         
@@ -169,8 +170,12 @@ def PackagesList():
     response.headers.add('total_count', str(len(results)))  # set total count in response header
     response.headers.add('page_count', str(page_num + 1))  # set next page number in response header
     
+    # Check for too many results
+    max_results = 1000
+    if len(results) > max_results:
+        return jsonify({'error': "Too many packages returned."}), 413
+    
     return response, 200
-
 
 @app.route('/package', methods=['POST'])
 def PackageCreate():
