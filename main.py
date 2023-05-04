@@ -115,13 +115,7 @@ def reset():
             return jsonify({'message': 'There are no tables to reset.'}), 200
 
         # For each table, drop it and recreate it with the original schema
-        
         for table in tables:
-            table_name = table
-            # logger.info(f"Table: {table}")
-            # logger.info(f"Table: {table.values()}")
-            # logger.info(f"Table_name: {list(table.values())[0]}")
-
             table_name = list(table.values())[0]
             if not table_name.endswith('_backup'):
                 cursor.execute(f"DROP TABLE {table_name}")
@@ -130,13 +124,14 @@ def reset():
     # Return a response indicating that the tables have been reset
     return jsonify({'message': 'All tables have been reset.'}), 200
 
-
 @app.route('/packages', methods=['POST'])
 def PackagesList():
     # Parse request body
     package_queries = request.json
 
     for query in package_queries:
+        if 'Version' in query:
+            version = query['Version']
         if 'Name' not in query:
             return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
             \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -144,8 +139,6 @@ def PackagesList():
     packageName = query['Name']
     # Check for pagination offset
     offset = request.args.get('offset', 0)
-
-    print("offset ", offset)
         
     # Mock database query
     results = []
