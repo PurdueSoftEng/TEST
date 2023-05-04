@@ -130,6 +130,7 @@ def PackagesList():
     package_queries = request.json
 
     logger.info(f'package_queries: {package_queries}')
+    logger.info(f'package_queries values: {package_queries.values()}')
 
 
     for query in package_queries:
