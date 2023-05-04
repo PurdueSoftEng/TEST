@@ -65,6 +65,7 @@ packages_table = Table('packages', metadata,
                        Column('metric_six', Float),
                        Column('metric_seven', Float),
                        Column('total_score', Float),
+                       Column('id', String),
                        )
 
 # Create a test table and insert data
@@ -167,9 +168,9 @@ def PackagesList():
 
     logger.info("Results: ", results)
 
-    for item in results:
-        for field in list(item.values()):
-            logger.info('field: ', str(field))
+    # for item in results:
+    #     for field in list(item.values()):
+    #         logger.info('field: ', str(field))
     
     # Generate response
     packageMetadata = jsonify(results)
@@ -276,8 +277,9 @@ def PackageCreate():
     metric_seven = 0.6
     total_score = 0.6
     
-    id = package_name + version
+    pakcage_id = package_name + version
     content = "base64-encoded package contents" #TODO update this with a content scraping program
+    id = "id"  #TODO update this metrics
 
     threshold = 0.1
     
@@ -295,8 +297,8 @@ def PackageCreate():
         # package already exists, return an error response
         return jsonify({'error': 'Package exists already.'}), 409
 
-    sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score]
+    sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score, id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score, id]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
