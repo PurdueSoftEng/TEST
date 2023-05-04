@@ -166,11 +166,12 @@ def PackagesList():
         results = cursor.fetchall()
 
     logger.info("Results: ", results)
+    results = results.json
 
     for item in results:
         logger.info(f'item: {item}')
-        # for field in item:
-        #     logger.info(f'field: {field}')
+        for field in item:
+            logger.info(f'field: {field}')
     
     # Generate response
     packageMetadata = jsonify(results)
