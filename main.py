@@ -123,8 +123,9 @@ def reset():
             # logger.info(f"Table_name: {list(table.values())[0]}")
 
             table_name = list(table.values())[0]
-            cursor.execute(f"DROP TABLE {table_name}")
-            cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
+            if not table_name.endswith('_backup'):
+                cursor.execute(f"DROP TABLE {table_name}")
+                cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
 
     # Return a response indicating that the tables have been reset
     return jsonify({'message': 'All tables have been reset.'}), 200
