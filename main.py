@@ -213,9 +213,9 @@ def PackageCreate():
     logger.debug(f"Result: {result}")
     logger.debug(f"Result: {result[0]}")
 
-    if result is not None:
-        # package already exists, return an error response
-        return jsonify({'error': 'Package exists already.'}), 409
+    # if result is not None:
+    #     # package already exists, return an error response
+    #     return jsonify({'error': 'Package exists already.'}), 409
 
     sql = "INSERT INTO packages (url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     val = [url, version, package_name, jsprogram, content, metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score]
