@@ -129,6 +129,9 @@ def PackagesList():
     # Parse request body
     package_queries = request.json
 
+    logger.info(f'package_queries: {package_queries}')
+
+
     for query in package_queries:
         if 'Version' in query:
             version = query['Version']
