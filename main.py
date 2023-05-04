@@ -93,7 +93,7 @@ def add_table():
 
 @app.route('/')
 def hello_world():
-    logger.warning('Hello, world!')
+    logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
     return f'Howdy {name}!'
 
