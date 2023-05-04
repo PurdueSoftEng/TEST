@@ -104,27 +104,27 @@ def CreateAuthToken():
 @app.route('/reset', methods=['DELETE'])
 def reset():
     with conn.cursor() as cursor:
-        # Get a list of all the tables in the database
+            # Get a list of all the tables in the database
         cursor.execute("SHOW TABLES")
         tables = cursor.fetchall()
-    
-    logger.info(f"Tables: {tables}")
+        
+        logger.info(f"Tables: {tables}")
 
-    if not tables:
-        # Return a response indicating that there are no tables to reset
-        return jsonify({'message': 'There are no tables to reset.'}), 200
+        if not tables:
+            # Return a response indicating that there are no tables to reset
+            return jsonify({'message': 'There are no tables to reset.'}), 200
 
-    # For each table, drop it and recreate it with the original schema
-    
-    for table in tables:
-        table_name = table
-        # logger.info(f"Table: {table}")
-        # logger.info(f"Table: {table.values()}")
-        # logger.info(f"Table_name: {list(table.values())[0]}")
+        # For each table, drop it and recreate it with the original schema
+        
+        for table in tables:
+            table_name = table
+            # logger.info(f"Table: {table}")
+            # logger.info(f"Table: {table.values()}")
+            # logger.info(f"Table_name: {list(table.values())[0]}")
 
-        table_name = list(table.values())[0]
-        cursor.execute(f"DROP TABLE {table_name}")
-        cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
+            table_name = list(table.values())[0]
+            cursor.execute(f"DROP TABLE {table_name}")
+            cursor.execute(f"CREATE TABLE {table_name} LIKE {table_name}_backup")
 
     # Return a response indicating that the tables have been reset
     return jsonify({'message': 'All tables have been reset.'}), 200
