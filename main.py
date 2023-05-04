@@ -136,6 +136,8 @@ def PackagesList():
             return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
             \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
+    logger.info(f'query: {query}')
+
     packageName = query['Name']
     # Check for pagination offset
     offset = request.args.get('offset', 0)
@@ -146,8 +148,12 @@ def PackagesList():
     for package in packages_table:
         for query in package_queries:
             logger.info(f'query: {query}')
-            if query == '*' or query == package['Name']:
-                results.append(package)
+            if version is not None:
+                if query == '*' or query == package['Name']:
+                    results.append(package)
+            else:
+                if query == '*' or query == package['Name']:
+                    results.append(package)
     
     # Apply pagination
     paginated_results = results[int(offset):int(offset)+10]  # limit to 10 results per page
