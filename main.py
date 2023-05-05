@@ -513,9 +513,13 @@ def PackageUpdate(id_path):
     request_body = request.json
 
     logger.info(f"Request_body: {request_body}")
-    logger.info(f"Request_body[0]: {request_body[0]}")
+    logger.info(f"Request_body['metadata']: {request_body['metadata']}")
+    logger.info(f"Request_body['data']: {request_body['data']}")
 
-    if ('Name' not in request_body) or ((request_body['Name'] == None) and ('ID' not in request_body)) or ((request_body['ID'] != None) and ('Version' not in request_body)) and (request_body['Version'] not in request_body):
+    meta = request_body['metadata']
+    dat = request_body['data']
+
+    if ('Name' not in meta) or ((request_body['Name'] == meta) and ('ID' not in request_body)) or ((request_body['ID'] != meta) and ('Version' not in meta)) and (request_body['Version'] not in meta):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
     
     id = request_body['ID']
