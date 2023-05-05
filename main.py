@@ -110,8 +110,6 @@ def PackageByRegExGet():
     else:
         regex = package_queries["RegEx"]
     
-    logger.info(f"Regex: {regex}")
-
     if regex == "":
         return jsonify({'error': "No packages match the regular expression."}), 404
 
@@ -132,7 +130,7 @@ def PackageByRegExGet():
         
     package_metadata_all = []
     for package in packages:
-        logger.info(f"package[0]: {package[0]}")
+        logger.info(f"package: {package}")
 
         package_name_obj = {"Name": package['package_name']}
         id_obj = {"ID": package['id']}
