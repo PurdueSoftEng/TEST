@@ -493,6 +493,7 @@ def PackageRetrieve(id):
     vec = ()
     logger.info(f"Result: {result}")
     if result is not None:
+        result = result[0]
         for row in result:
             id_result = result['id']
             package_name = result['package_name']
