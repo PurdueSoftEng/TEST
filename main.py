@@ -323,40 +323,39 @@ def PackageCreate():
     if ('URL' not in request_body) or ((request_body['URL'] == None) and ('Content' not in request_body)) or ((request_body['URL'] != None) and ('Content' in request_body)):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
     
+    version = '0.0.0'
+    package_name = 'temp'
+    url = ''
+    jsprogram = ''
+    content = ''
+
     if ('URL' in request_body):
         url = request_body['URL']
-    else:
-        url = ''
+        version = metricslib.get_version_py(url)
+        package_name = metricslib.get_name_py(url)
     
-    url = request_body['URL']
-    version = "1.0.0" # TODO: change this to use the library to get the version
-    package_name = 'temp' # TODO: change this to use the library to get the name
     if ('JSProgram' in request_body):
         jsprogram = request_body['JSProgram']
-    else:
-        jsprogram = ''
 
     if ('Content' in request_body):
         content = request_body['Content']
-    else:
-        content = ''
 
-    #data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+    data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
 
-    #json = json.loads(data)
+    data = json.loads(data)
 
-    metric_one = 0
-    metric_two = 0
-    metric_three = 0
-    metric_four = 0
-    metric_five = 0
-    metric_six = 0
-    metric_seven = 0.6
-    total_score = 0.6
-    
-    pakcage_id = package_name + version
+    metric_one = data['ramp_up']
+    metric_two = data['bus_factor']
+    metric_three = data['compatibility']
+    metric_four = data['correctness']
+    metric_five = data['responsiveness']
+    metric_six = data['pinning_practice']
+    metric_seven = data['reviewed_code']
+    total_score = data['net_score']
+
+    pakcage_id = package_name + '-' + version
     content = "base64-encoded package contents" #TODO update this with a content scraping program
-    id = "id"  #TODO update this metrics
+    id = pakcage_id
 
     threshold = 0.1
     
@@ -381,13 +380,11 @@ def PackageCreate():
         cursor.execute(sql, val)
         conn.commit()
 
-    package_name_obj = {"Name": package_name}
-    id_obj = {"ID": id}
     package_data = {
         "metadata": {
-            "Name": package_name_obj,
+            "Name": package_name,
             "Version": version,
-            "ID": id_obj
+            "ID": id
         },
         "data": {
             "Content": content,
