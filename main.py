@@ -365,9 +365,9 @@ def PackageCreate():
     metric_seven = data['reviewed_code']
     total_score = data['net_score']
 
-    pakcage_id = package_name + '-' + version
+    package_id = package_name + '-' + version
     content = "base64-encoded package contents" #TODO update this with a content scraping program
-    id = pakcage_id
+    id = package_id
 
     threshold = 0.1
     
@@ -409,15 +409,15 @@ def PackageCreate():
 
     return json_data, 201
 
-@app.route('/package/<id_path>', methods=['GET'])
+@app.route('/package/<id>', methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
-def PackageRetrieve(id_path):
-    if id_path is None:
+def PackageRetrieve(id):
+    if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
 
     sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
-    val = [id_path]
+    val = [id]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
@@ -427,7 +427,7 @@ def PackageRetrieve(id_path):
         return jsonify({'error': 'Package does not exist.'}), 404
 
     sql = "SELECT id, package_name, version, content, url, jsprogram FROM packages WHERE id=%s"
-    val = [id_path]
+    val = [id]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
@@ -436,21 +436,18 @@ def PackageRetrieve(id_path):
     vec = ()
 
     for row in result:
-        id = result[0]
+        id_result = result[0]
         package_name = result[1]
         version = result[2]
         content = result[3]
         url = result[4]
         jsprogram = result[5]
 
-        package_name_obj = {"Name": package_name}
-        id_obj = {"ID": id}
-
         package_data = {
             "metadata": {
-                "Name": package_name_obj,
+                "Name": package_name,
                 "Version": version,
-                "ID": id_obj
+                "ID": id_result
             },
             "data": {
                 "Content": content,
@@ -461,7 +458,6 @@ def PackageRetrieve(id_path):
         vec.append(package_data)
 
     json_data = json.dumps([ob.__dict__ for ob in vec])
-
     return json_data, 200
 
 @app.route('/package/<id_path>', methods=['PUT'])
