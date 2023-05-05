@@ -10,6 +10,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 
+# data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+
 client = glogging.Client()
 
 handler = CloudLoggingHandler(client)
@@ -25,7 +27,6 @@ logger.info("This is an info message")
 logger.warning("This is a warning message")
 logger.error("This is an error message")
 logger.info(GITHUB_TOKEN)
-
 
 app = Flask(__name__)
 CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
@@ -108,25 +109,54 @@ def PackageByRegExGet():
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     else:
         regex = package_queries["RegEx"]
+    
+    logger.info(f"Regex: {regex}")
+
+    if regex == "":
+        return jsonify({'error': "No packages match the regular expression."}), 404
 
     try:
         re.compile(regex)
         print("Valid regex!")
     except re.error:
         print("Invalid regex!")
+
+    with conn.cursor() as cursor:
+        sql = "SELECT * FROM packages WHERE package_name REGEXP %s"
+        val = [regex]
+        cursor.execute(sql, val)
+
+        packages = cursor.fetchall()
+        if len(packages) == 0:
+            return jsonify({'error': "No packages match the regular expression."}), 404
+        
+    logger.info(f"packages[package_name]: {packages['package_name']}")
+
+    # package_name_obj = {"Name": package_name}
+    # id_obj = {"ID": id}
+    # package_metadta = {
+    #         "Name": name,
+    #         "Version": version,
+    #         "ID": id
+    #     }
     
+    return jsonify(packages), 200
+
+@app.route('/package/<id>/rate', methods=['GET'])
+def PackageRate(id):
+    if id is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
-    logger.info("Regex: ", regex)
-
-
-
+    logger.info(f'if: {id}')
+    
     return jsonify({'message': 'Table added successfully!'})
 
 @app.route('/')
 def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
-    #logger.info(metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST"))
+    logger.info(metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST"))
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
@@ -226,7 +256,7 @@ def PackagesList():
     total_package_query.headers.add('page_count', str(page_num + 1))  # set next page number in response header
     
     # Check for too many results
-    max_results = 1000
+    max_results = 5
     if len(results) > max_results:
         return jsonify({'error': "Too many packages returned."}), 413
     
@@ -274,11 +304,14 @@ def PackageByNameGet():
     content = "tempcontentstring"
     jsprogram = "testprogram"
     url = ""
+    package_name = {"Name": name}
+    id = name+version
+    id_obj = {"ID": id}
     package_history = {
         "PackageMetadata": {
-            "Name": name,
+            "Name": package_name,
             "Version": version,
-            "ID": id
+            "ID": id_obj
         },
         "PackageData": {
             "Content": content,
@@ -316,9 +349,9 @@ def PackageCreate():
     else:
         content = ''
 
-    data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+    #data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
 
-    json = json.loads(data)
+    #json = json.loads(data)
 
     metric_one = 0
     metric_two = 0
@@ -356,11 +389,13 @@ def PackageCreate():
         cursor.execute(sql, val)
         conn.commit()
 
+    package_name_obj = {"Name": package_name}
+    id_obj = {"ID": id}
     package_data = {
         "metadata": {
-            "Name": package_name,
+            "Name": package_name_obj,
             "Version": version,
-            "ID": id
+            "ID": id_obj
         },
         "data": {
             "Content": content,
@@ -406,11 +441,14 @@ def PackageGetter(id_path):
         url = result[4]
         jsprogram = result[5]
 
+        package_name_obj = {"Name": package_name}
+        id_obj = {"ID": id}
+
         package_data = {
             "metadata": {
-                "Name": package_name,
+                "Name": package_name_obj,
                 "Version": version,
-                "ID": id
+                "ID": id_obj
             },
             "data": {
                 "Content": content,
