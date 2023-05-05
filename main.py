@@ -9,6 +9,7 @@ from google.cloud.logging_v2.handlers import CloudLoggingHandler
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
+from datetime import datetime, timezone
 
 # data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
 
@@ -79,11 +80,6 @@ packages_table = Table('packages', metadata,
                        Column('metric_seven', Float),
                        Column('total_score', Float),
                        Column('id', String),
-                       )
-
-users_table = Table('users', metadata,
-                       Column('username', String),
-                       Column('isAdmin', Integer),
                        )
 
 # Create a test table and insert data
@@ -411,11 +407,6 @@ def PackageCreate():
         }
     }
 
-    query = users_table.insert().values(username='admin', isAdmin=0)
-    with conn.cursor() as cursor:
-        cursor.execute(str(query))
-        conn.commit()
-
     json_data = json.dumps(package_data)
 
     return json_data, 201
@@ -527,14 +518,14 @@ def PackageDelete(id):
 
     return jsonify({'message': "Package is deleted."}), 200
 
-@app.route('/package/<id_path>/rate', methods=['GET'])
-def PackageRate(id_path):
-    if id_path is None:
+@app.route('/package/<id>/rate', methods=['GET'])
+def PackageRate(id):
+    if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
 
     sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
-    val = [id_path]
+    val = [id]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
@@ -544,10 +535,11 @@ def PackageRate(id_path):
         return jsonify({'error': 'Package does not exist.'}), 404
 
     sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score FROM packages WHERE id=%s"
-    val = [id_path]
+    val = [id]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
+        result = cursor.fetchall()
         logger.info(f"Result: {result}")
         #result = list(cursor.fetchall().values())
         result = [10] * 10
