@@ -81,10 +81,10 @@ packages_table = Table('packages', metadata,
                        Column('id', String),
                        )
 
-# users_table = Table('users', metadata,
-#                        Column('username', String),
-#                        Column('isAdmin', bool),
-#                        )
+users_table = Table('users', metadata,
+                       Column('username', String),
+                       Column('isAdmin', Integer),
+                       )
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
@@ -411,10 +411,10 @@ def PackageCreate():
         }
     }
 
-    # query = users_table.insert().values(name='admin', isadmin=False)
-    # with conn.cursor() as cursor:
-    #     cursor.execute(str(query))
-    #     conn.commit()
+    query = users_table.insert().values(username='admin', isAdmin=0)
+    with conn.cursor() as cursor:
+        cursor.execute(str(query))
+        conn.commit()
 
     json_data = json.dumps(package_data)
 
