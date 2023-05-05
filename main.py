@@ -29,7 +29,9 @@ logger.error("This is an error message")
 logger.info(GITHUB_TOKEN)
 
 app = Flask(__name__)
-CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
+# CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/packages": {"origins": "https://purduesofteng.github.io/"}})
+
 
 # Configure database connection settings
 db_user = 'root'
@@ -110,8 +112,6 @@ def PackageByRegExGet():
     else:
         regex = package_queries["RegEx"]
     
-    logger.info(f"Regex: {regex}")
-
     if regex == "":
         return jsonify({'error': "No packages match the regular expression."}), 404
 
@@ -130,17 +130,16 @@ def PackageByRegExGet():
         if len(packages) == 0:
             return jsonify({'error': "No packages match the regular expression."}), 404
         
-    logger.info(f"packages[0]: {packages[0]}")
-
-    # package_name_obj = {"Name": package_name}
-    # id_obj = {"ID": id}
-    # package_metadta = {
-    #         "Name": name,
-    #         "Version": version,
-    #         "ID": id
-    #     }
+    package_metadata_all = []
+    for package in packages:
+        package_metadata = {
+                "Name": package['package_name'],
+                "Version": package['version'],
+                "ID": package['id']
+            }
+        package_metadata_all.append(package_metadata)
     
-    return jsonify(packages), 200
+    return jsonify(package_metadata_all), 200
 
 @app.route('/')
 def hello_world():
@@ -157,7 +156,7 @@ def CreateAuthToken():
 
 @app.route('/reset', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
-def reset():
+def RegistryReset():
     with conn.cursor() as cursor:
             # Get a list of all the tables in the database
         cursor.execute("SHOW TABLES")
@@ -296,14 +295,12 @@ def PackageByNameGet():
     content = "tempcontentstring"
     jsprogram = "testprogram"
     url = ""
-    package_name = {"Name": name}
     id = name+version
-    id_obj = {"ID": id}
     package_history = {
         "PackageMetadata": {
-            "Name": package_name,
+            "Name": name,
             "Version": version,
-            "ID": id_obj
+            "ID": id
         },
         "PackageData": {
             "Content": content,
@@ -341,8 +338,12 @@ def PackageCreate():
         content = request_body['Content']
 
     data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+    logger.info(f'data: {data}')
+    logger.info(f'data: {data[0]}')
 
     data = json.loads(data)
+    logger.info(f'data: {data}')
+
 
     metric_one = data['ramp_up']
     metric_two = data['bus_factor']
@@ -398,7 +399,7 @@ def PackageCreate():
     return json_data, 201
 
 @app.route('/package/<id_path>', methods=['GET'])
-def PackageGetter(id_path):
+def PackageRetrieve(id_path):
     if id_path is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -452,7 +453,7 @@ def PackageGetter(id_path):
     return json_data, 200
 
 @app.route('/package/<id_path>', methods=['PUT'])
-def PackageSetter(id_path):
+def PackageUpdate(id_path):
 
     request_body = request.json
 
