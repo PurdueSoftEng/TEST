@@ -31,8 +31,11 @@ logger.info(GITHUB_TOKEN)
 app = Flask(__name__)
 CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
 CORS(app, resources={r"/packages": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package/<id_path>": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package/<id_path>/rate": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package/byName/<name>": {"origins": "https://purduesofteng.github.io/"}})
 CORS(app, resources={r"/package/byRegEx": {"origins": "https://purduesofteng.github.io/"}})
-
 
 # Configure database connection settings
 db_user = 'root'
