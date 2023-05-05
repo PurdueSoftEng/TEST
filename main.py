@@ -478,7 +478,7 @@ def PackageRetrieve(id):
         cursor.execute(sql, val)
         result = cursor.fetchall()
 
-    vec = ()
+    vec = []
     logger.info(f"Result: {result}")
     if result is not None:
         result = result[0]
