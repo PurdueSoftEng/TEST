@@ -82,8 +82,8 @@ packages_table = Table('packages', metadata,
                        )
 
 users_table = Table('users', metadata,
-                       Column('package_id', Integer, primary_key=True),
-                       Column('metric_one', Float),
+                       Column('username', String),
+                       Column('isAdmin', bool),
                        )
 
 # Create a test table and insert data
@@ -547,6 +547,8 @@ def PackageRate(id_path):
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
         result = list(cursor.fetchall().values())
+
+    logger.info(f"Result: {result}")
 
     ramp_up = int(result[0])
     bus_factor = int(result[1])
