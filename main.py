@@ -489,6 +489,7 @@ def PackageRetrieve(id):
     vec = ()
     logger.info(f"Result: {result}")
     if result is not None:
+        result = result[0]
         for row in result:
             id_result = result['id']
             package_name = result['package_name']
@@ -517,9 +518,10 @@ def PackageRetrieve(id):
 @app.route('/package/<id_path>', methods=['PUT'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageUpdate(id_path):
-    logger.info(request.json)
-    logger.info(request.headers)
     request_body = request.json
+
+    logger.info(f"Request_body: {request_body}")
+    logger.info(f"Request_body[0]: {request_body[0]}")
 
     if ('Name' not in request_body) or ((request_body['Name'] == None) and ('ID' not in request_body)) or ((request_body['ID'] != None) and ('Version' not in request_body)) and (request_body['Version'] not in request_body):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
