@@ -29,7 +29,7 @@ logger.error("This is an error message")
 logger.info(GITHUB_TOKEN)
 
 app = Flask(__name__)
-# CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
 CORS(app, resources={r"/packages": {"origins": "https://purduesofteng.github.io/"}})
 
 
@@ -179,6 +179,7 @@ def RegistryReset():
     return jsonify({'message': 'All tables have been reset.'}), 200
 
 @app.route('/packages', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackagesList():
     # Parse request body
     package_queries = request.json
