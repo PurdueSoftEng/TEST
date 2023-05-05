@@ -133,13 +133,10 @@ def PackageByRegExGet():
     package_metadata_all = []
     for package in packages:
         logger.info(f"package: {package}")
-
-        package_name_obj = {"Name": package['package_name']}
-        id_obj = {"ID": package['id']}
         package_metadata = {
-                "Name": package_name_obj,
+                "Name": package['package_name'],
                 "Version": package['version'],
-                "ID": package_name_obj
+                "ID": package['id']
             }
         package_metadata_all.append(package_metadata)
     
