@@ -109,15 +109,24 @@ def PackageByRegExGet():
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     else:
         regex = package_queries["RegEx"]
+    
+    logger.info("Regex: ", regex)
 
     try:
         re.compile(regex)
         print("Valid regex!")
     except re.error:
         print("Invalid regex!")
+
+    with conn.cursor() as cursor:
+        sql = "SELECT * FROM packages WHERE package_name REGEXP %s"
+        val = [regex]
+        cursor.execute(sql, val)
+
+        packages = cursor.fetchall()
+        if len(packages) == 0:
+            return jsonify({'error': "No packages match the regular expression."}), 404        
     
-    
-    logger.info("Regex: ", regex)
     return jsonify({'message': 'Table added successfully!'})
 
 @app.route('/')
@@ -224,7 +233,7 @@ def PackagesList():
     total_package_query.headers.add('page_count', str(page_num + 1))  # set next page number in response header
     
     # Check for too many results
-    max_results = 1000
+    max_results = 5
     if len(results) > max_results:
         return jsonify({'error': "Too many packages returned."}), 413
     
