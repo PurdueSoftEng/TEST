@@ -586,8 +586,6 @@ def PackageRate(id):
         cursor.execute(sql, val)
         result = cursor.fetchall()
         logger.info(f"Result: {result}")
-        #result = list(cursor.fetchall().values())
-        result= 10*10
 
     if result is None:
         return jsonify({'error': 'Package does not exist.'}), 404
