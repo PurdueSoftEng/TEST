@@ -130,7 +130,7 @@ def PackageByRegExGet():
         if len(packages) == 0:
             return jsonify({'error': "No packages match the regular expression."}), 404
         
-    logger.info(f"packages[package_name]: {packages['package_name']}")
+    logger.info(f"packages[0]: {packages[0]}")
 
     # package_name_obj = {"Name": package_name}
     # id_obj = {"ID": id}
