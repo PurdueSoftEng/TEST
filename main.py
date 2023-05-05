@@ -29,9 +29,13 @@ logger.error("This is an error message")
 logger.info(GITHUB_TOKEN)
 
 app = Flask(__name__)
-# CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
 CORS(app, resources={r"/packages": {"origins": "https://purduesofteng.github.io/"}})
-
+CORS(app, resources={r"/package/<id_path>": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package/<id_path>/rate": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package/byName/<name>": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package/byRegEx": {"origins": "https://purduesofteng.github.io/"}})
 
 # Configure database connection settings
 db_user = 'root'
@@ -77,8 +81,14 @@ packages_table = Table('packages', metadata,
                        Column('id', String),
                        )
 
+users_table = Table('users', metadata,
+                       Column('package_id', Integer, primary_key=True),
+                       Column('metric_one', Float),
+                       )
+
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def create_table():
     cursor = conn.cursor()
     cursor.execute(
@@ -93,6 +103,7 @@ def create_table():
     return 'Table created and data inserted successfully.'
 
 @app.route('/add-table', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def add_table():
     # Insert new record into the test_table
     query = test_table.insert().values(name='test', value=1.23)
@@ -103,6 +114,7 @@ def add_table():
     return jsonify({'message': 'Table added successfully!'})
 
 @app.route('/package/byRegEx', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByRegExGet():
     package_queries = request.json
 
@@ -142,6 +154,7 @@ def PackageByRegExGet():
     return jsonify(package_metadata_all), 200
 
 @app.route('/')
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
@@ -151,6 +164,7 @@ def hello_world():
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def CreateAuthToken():
     return jsonify({'message': 'This system does not support authentication.'}), 501
 
@@ -179,6 +193,7 @@ def RegistryReset():
     return jsonify({'message': 'All tables have been reset.'}), 200
 
 @app.route('/packages', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackagesList():
     # Parse request body
     package_queries = request.json
@@ -223,9 +238,7 @@ def PackagesList():
     for item in results:
         for field in item.items():
             if field[0] == 'package_name':
-                name = {
-                        "PackageName": field[1]
-                    }
+                name = field[1]
             if field[0] == 'version':
                 version = field[1]
 
@@ -254,6 +267,7 @@ def PackagesList():
     return total_package_query, 200
 
 @app.route('/package/byName/<name>', methods=['DELETE'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByNameDelete(name):
     #name = request.args.get('name')
     if name is None:
@@ -275,9 +289,9 @@ def PackageByNameDelete(name):
 
     return jsonify({'message': "Package is deleted."}), 200
 
-@app.route('/package/byName', methods=['GET'])
-def PackageByNameGet():
-    name = request.args.get('name')
+@app.route('/package/byName/<name>', methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
+def PackageByNameGet(name):
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -313,6 +327,7 @@ def PackageByNameGet():
     return package_history, 200
 
 @app.route('/package', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageCreate():
     # Add package to database
     request_body = request.json
@@ -320,42 +335,48 @@ def PackageCreate():
     if ('URL' not in request_body) or ((request_body['URL'] == None) and ('Content' not in request_body)) or ((request_body['URL'] != None) and ('Content' in request_body)):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
     
+    version = '0.0.0'
+    package_name = 'temp'
+    url = ''
+    jsprogram = ''
+    content = ''
+
     if ('URL' in request_body):
         url = request_body['URL']
-    else:
-        url = ''
+        version = metricslib.get_version_py(url)
+        package_name = metricslib.get_name_py(url)
     
-    url = request_body['URL']
-    version = "1.0.0" # TODO: change this to use the library to get the version
-    package_name = 'temp' # TODO: change this to use the library to get the name
     if ('JSProgram' in request_body):
         jsprogram = request_body['JSProgram']
-    else:
-        jsprogram = ''
 
     if ('Content' in request_body):
         content = request_body['Content']
-    else:
-        content = ''
+        url = "" #TODO: URL NEEDS TO BE GOTTEN BY DECODER
+        name = metricslib.get_name(url)
+        version = metricslib.get_version_py(url)
+
+    
 
     data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
-    json = json.loads(data)
-    logger.info(f'json: {json}')
     logger.info(f'data: {data}')
     logger.info(f'data: {data[0]}')
 
-    metric_one = 0
-    metric_two = 0
-    metric_three = 0
-    metric_four = 0
-    metric_five = 0
-    metric_six = 0
-    metric_seven = 0.6
-    total_score = 0.6
-    
-    pakcage_id = package_name + version
+    data = json.loads(data)
+    logger.info(f'data: {data}')
+
+
+    metric_one = data['ramp_up']
+    metric_two = data['bus_factor']
+    metric_three = data['compatibility']
+    metric_four = data['correctness']
+    metric_five = data['responsiveness']
+    metric_six = data['pinning_practice']
+    metric_seven = data['reviewed_code']
+    total_score = data['net_score']
+
+    package_id = package_name + '-' + version
     content = "base64-encoded package contents" #TODO update this with a content scraping program
-    id = "id"  #TODO update this metrics
+    id = package_id
 
     threshold = 0.1
     
@@ -380,13 +401,11 @@ def PackageCreate():
         cursor.execute(sql, val)
         conn.commit()
 
-    package_name_obj = {"Name": package_name}
-    id_obj = {"ID": id}
     package_data = {
         "metadata": {
-            "Name": package_name_obj,
+            "Name": package_name,
             "Version": version,
-            "ID": id_obj
+            "ID": id
         },
         "data": {
             "Content": content,
@@ -399,14 +418,15 @@ def PackageCreate():
 
     return json_data, 201
 
-@app.route('/package/<id_path>', methods=['GET'])
-def PackageRetrieve(id_path):
-    if id_path is None:
+@app.route('/package/<id>', methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
+def PackageRetrieve(id):
+    if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
 
     sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
-    val = [id_path]
+    val = [id]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
@@ -416,7 +436,7 @@ def PackageRetrieve(id_path):
         return jsonify({'error': 'Package does not exist.'}), 404
 
     sql = "SELECT id, package_name, version, content, url, jsprogram FROM packages WHERE id=%s"
-    val = [id_path]
+    val = [id]
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
@@ -424,36 +444,34 @@ def PackageRetrieve(id_path):
 
     vec = ()
 
-    for row in result:
-        id = result[0]
-        package_name = result[1]
-        version = result[2]
-        content = result[3]
-        url = result[4]
-        jsprogram = result[5]
+    if result is not None:
+        for row in result:
+            id_result = result[0]
+            package_name = result[1]
+            version = result[2]
+            content = result[3]
+            url = result[4]
+            jsprogram = result[5]
 
-        package_name_obj = {"Name": package_name}
-        id_obj = {"ID": id}
-
-        package_data = {
-            "metadata": {
-                "Name": package_name_obj,
-                "Version": version,
-                "ID": id_obj
-            },
-            "data": {
-                "Content": content,
-                "URL": url,
-                "JSProgram": jsprogram
+            package_data = {
+                "metadata": {
+                    "Name": package_name,
+                    "Version": version,
+                    "ID": id_result
+                },
+                "data": {
+                    "Content": content,
+                    "URL": url,
+                    "JSProgram": jsprogram
+                }
             }
-        }
-        vec.append(package_data)
+            vec.append(package_data)
 
     json_data = json.dumps([ob.__dict__ for ob in vec])
-
     return json_data, 200
 
 @app.route('/package/<id_path>', methods=['PUT'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageUpdate(id_path):
 
     request_body = request.json
@@ -485,15 +503,16 @@ def PackageUpdate(id_path):
     return jsonify({'message': "Version is updated."}), 200
 
 
-@app.route('/package/<id_path>', methods=['DELETE'])
-def PackageDelete(id_path):    
-    if id_path is None:
+@app.route('/package/<id>', methods=['DELETE'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
+def PackageDelete(id):    
+    if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
 
     with conn.cursor() as cursor:
         sql = "SELECT * FROM packages WHERE id=%s"
-        val = [id_path]
+        val = [id]
         cursor.execute(sql, val)
 
         packages = cursor.fetchall()
@@ -519,10 +538,10 @@ def PackageRate(id_path):
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    if list(result.values())[0] == 0:
+    if result is None:
         return jsonify({'error': 'Package does not exist.'}), 404
 
-    sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_siz, metric_seven, total_score FROM packages WHERE id=%s"
+    sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score FROM packages WHERE id=%s"
     val = [id_path]
 
     with conn.cursor() as cursor:
