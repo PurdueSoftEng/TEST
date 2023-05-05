@@ -4,6 +4,9 @@ import logging
 import json
 import re
 import metricslib
+import base64
+import zipfile
+import io
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 from flask import Flask, request, jsonify
