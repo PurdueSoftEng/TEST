@@ -368,9 +368,24 @@ def PackageCreate():
 
     if ('Content' in request_body):
         content = request_body['Content']
-        url = "" #TODO: URL NEEDS TO BE GOTTEN BY DECODER
-        name = metricslib.get_name(url)
-        version = metricslib.get_version_py(url)
+        data = package_json_fetch(content)
+        if data is not None:
+            try:
+                package_name = data['name']
+            except:
+                package_name = 'Package'
+            try:
+                version = data['version']
+            except:
+                version = '0.0.0'
+            try:
+                url = data['repository']['url']
+            except:
+                try:
+                    url = data['homepage']
+                except:
+                    url = ''
+
 
     data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
     logger.info(f'data: {data}')

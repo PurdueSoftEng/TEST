@@ -1,6 +1,7 @@
 import base64
 import zipfile
 import io
+import json
 
 def unzip_and_encode(file_path):
     with zipfile.ZipFile(file_path, 'r') as zip_ref:
@@ -20,7 +21,23 @@ def package_json_fetch(content):
         obj = zf.getinfo("package.json")
         with zf.open("package.json", 'r') as ptr:
             contents = ptr.read().decode('utf-8')
-            return json.loads(contents)
+            print(type(contents))
+            data = json.loads(contents)
+            try:
+                package_name = data['name']
+            except:
+                pass
+            try:
+                version = data['version']
+            except:
+                pass
+            try:
+                url = data['repository']['url']
+            except:
+                try:
+                    url = data['homepage']
+                except:
+                    pass
     except:
         return None
 
