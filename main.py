@@ -284,10 +284,9 @@ def PackageByNameDelete(name):
 
     return jsonify({'message': "Package is deleted."}), 200
 
-@app.route('/package/byName', methods=['GET'])
+@app.route('/package/byName/<name>', methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
-def PackageByNameGet():
-    name = request.args.get('name')
+def PackageByNameGet(name):
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -426,14 +425,14 @@ def PackageRetrieve(id):
     if list(result.values())[0] == 0:
         return jsonify({'error': 'Package does not exist.'}), 404
 
-    # sql = "SELECT id, package_name, version, content, url, jsprogram FROM packages WHERE id=%s"
-    # val = [id]
+    sql = "SELECT id, package_name, version, content, url, jsprogram FROM packages WHERE id=%s"
+    val = [id]
 
-    # with conn.cursor() as cursor:
-    #     cursor.execute(sql, val)
-    #     result = cursor.fetchall()
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchall()
 
-    # vec = ()
+    vec = ()
 
     if result is not None:
         for row in result:
