@@ -81,6 +81,11 @@ packages_table = Table('packages', metadata,
                        Column('id', String),
                        )
 
+users_table = Table('users', metadata,
+                       Column('package_id', Integer, primary_key=True),
+                       Column('metric_one', Float),
+                       )
+
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
@@ -346,6 +351,11 @@ def PackageCreate():
 
     if ('Content' in request_body):
         content = request_body['Content']
+        url = "" #TODO: URL NEEDS TO BE GOTTEN BY DECODER
+        name = metricslib.get_name(url)
+        version = metricslib.get_version_py(url)
+
+    
 
     data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
     logger.info(f'data: {data}')
@@ -531,7 +541,7 @@ def PackageRate(id_path):
     if result is None:
         return jsonify({'error': 'Package does not exist.'}), 404
 
-    sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_siz, metric_seven, total_score FROM packages WHERE id=%s"
+    sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score FROM packages WHERE id=%s"
     val = [id_path]
 
     with conn.cursor() as cursor:
