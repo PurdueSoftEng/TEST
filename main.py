@@ -30,6 +30,8 @@ logger.info(GITHUB_TOKEN)
 
 app = Flask(__name__)
 CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/packages": {"origins": "https://purduesofteng.github.io/"}})
+
 
 # Configure database connection settings
 db_user = 'root'
@@ -158,7 +160,7 @@ def CreateAuthToken():
 
 @app.route('/reset', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
-def reset():
+def RegistryReset():
     with conn.cursor() as cursor:
             # Get a list of all the tables in the database
         cursor.execute("SHOW TABLES")
@@ -402,7 +404,7 @@ def PackageCreate():
     return json_data, 201
 
 @app.route('/package/<id_path>', methods=['GET'])
-def PackageGetter(id_path):
+def PackageRetrieve(id_path):
     if id_path is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -456,7 +458,7 @@ def PackageGetter(id_path):
     return json_data, 200
 
 @app.route('/package/<id_path>', methods=['PUT'])
-def PackageSetter(id_path):
+def PackageUpdate(id_path):
 
     request_body = request.json
 
