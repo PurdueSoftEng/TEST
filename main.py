@@ -29,7 +29,7 @@ logger.error("This is an error message")
 logger.info(GITHUB_TOKEN)
 
 app = Flask(__name__)
-CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
+# CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
 CORS(app, resources={r"/packages": {"origins": "https://purduesofteng.github.io/"}})
 
 
@@ -132,7 +132,6 @@ def PackageByRegExGet():
         
     package_metadata_all = []
     for package in packages:
-        logger.info(f"package: {package}")
         package_metadata = {
                 "Name": package['package_name'],
                 "Version": package['version'],
