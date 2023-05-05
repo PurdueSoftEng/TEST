@@ -130,7 +130,8 @@ def PackageByRegExGet():
         if len(packages) == 0:
             return jsonify({'error': "No packages match the regular expression."}), 404
         
-    logger.info(f"packages[0]: {packages[0]}")
+    for package in packages:
+        logger.info(f"package[0]: {package[0]}")
 
     # package_name_obj = {"Name": package_name}
     # id_obj = {"ID": id}
@@ -341,9 +342,12 @@ def PackageCreate():
     else:
         content = ''
 
-    #data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+    data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+    json = json.loads(data)
+    logger.info(f'json: {json}')
+    logger.info(f'data: {data}')
+    logger.info(f'data: {data[0]}')
 
-    #json = json.loads(data)
 
     metric_one = 0
     metric_two = 0
