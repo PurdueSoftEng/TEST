@@ -38,6 +38,3 @@ jobs:
     - name: Run RESTler
       run: |
         restler --config config.yaml    # Analyze the results
-    - name: Generate RESTler Report
-      run: |
-        restler-report --input RESTlerResults.json --output report.html

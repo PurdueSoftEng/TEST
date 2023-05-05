@@ -299,14 +299,12 @@ def PackageByNameGet():
     content = "tempcontentstring"
     jsprogram = "testprogram"
     url = ""
-    package_name = {"Name": name}
     id = name+version
-    id_obj = {"ID": id}
     package_history = {
         "PackageMetadata": {
-            "Name": package_name,
+            "Name": name,
             "Version": version,
-            "ID": id_obj
+            "ID": id
         },
         "PackageData": {
             "Content": content,
@@ -349,7 +347,6 @@ def PackageCreate():
     logger.info(f'json: {json}')
     logger.info(f'data: {data}')
     logger.info(f'data: {data[0]}')
-
 
     metric_one = 0
     metric_two = 0
