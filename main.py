@@ -3,14 +3,14 @@ import os
 import logging
 import json
 import re
-import metricslib
+# import metricslib
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 
-data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+# data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
 
 client = glogging.Client()
 
