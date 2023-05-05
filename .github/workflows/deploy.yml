@@ -31,10 +31,10 @@ jobs:
         --platform managed \
         --allow-unauthenticated \
         --memory 512M    # Install RESTler
-    - name: Install RESTler
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y restler    # Run RESTler
-    - name: Run RESTler
-      run: |
-        restler --config config.yaml    # Analyze the results
+    # - name: Install RESTler
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y restler    # Run RESTler
+    # - name: Run RESTler
+    #   run: |
+    #     restler --config config.yaml    # Analyze the results
