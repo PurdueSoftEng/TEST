@@ -522,9 +522,9 @@ def PackageUpdate(id_path):
     if ('Name' not in meta) or ((request_body['Name'] == meta) and ('ID' not in request_body)) or ((request_body['ID'] != meta) and ('Version' not in meta)) and (request_body['Version'] not in meta):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
     
-    id = request_body['ID']
-    version = request_body['Version']
-    package_name = request_body['Name']
+    id = meta['ID']
+    version = meta['Version']
+    package_name = meta['Name']
 
     sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
     val = [id_path]
