@@ -28,7 +28,6 @@ logger.warning("This is a warning message")
 logger.error("This is an error message")
 logger.info(GITHUB_TOKEN)
 
-
 app = Flask(__name__)
 CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
 
@@ -119,9 +118,6 @@ def PackageByRegExGet():
     
     
     logger.info("Regex: ", regex)
-
-
-
     return jsonify({'message': 'Table added successfully!'})
 
 @app.route('/')
@@ -318,9 +314,9 @@ def PackageCreate():
     else:
         content = ''
 
-    data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+    #data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
 
-    json = json.loads(data)
+    #json = json.loads(data)
 
     metric_one = 0
     metric_two = 0
