@@ -18,14 +18,15 @@ handler = CloudLoggingHandler(client)
 handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
 
+GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 logger.info("This is an info message")
 logger.warning("This is a warning message")
 logger.error("This is an error message")
-
-logger.info("data: ", data)
+logger.info(GITHUB_TOKEN)
 
 
 app = Flask(__name__)
@@ -127,7 +128,7 @@ def PackageByRegExGet():
 def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
-    #metricslib.calcscore_py("https://github.com/cloudinary/cloudinary_npm")
+    #logger.info(metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST"))
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
@@ -317,6 +318,10 @@ def PackageCreate():
     else:
         content = ''
 
+    data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
+
+    json = json.loads(data)
+
     metric_one = 0
     metric_two = 0
     metric_three = 0
@@ -474,6 +479,53 @@ def PackageDelete(id_path):
 
     return jsonify({'message': "Package is deleted."}), 200
 
-    
+@app.route('/package/<id_path>/rate', methods=['GET'])
+def PackageRate(id_path):
+    if id_path is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+
+    sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
+    val = [id_path]
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = cursor.fetchone()
+
+    if list(result.values())[0] == 0:
+        return jsonify({'error': 'Package does not exist.'}), 404
+
+    sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_siz, metric_seven, total_score FROM packages WHERE id=%s"
+    val = [id_path]
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        result = list(cursor.fetchall().values())
+
+    ramp_up = int(result[0])
+    bus_factor = int(result[1])
+    license = int(result[2])
+    correctness = int(result[3])
+    resp_maintain = int(result[4])
+    pinning = int(result[5])
+    pull_request = int(result[6])
+    net_score = int(result[7])
+
+    package_rating = {
+        "BusFacotr": bus_factor,
+        "Correctness": correctness,
+        "RampUp": ramp_up,
+        "ResponsiveMaintainer": resp_maintain,
+        "LicenseScore": license,
+        "GoodPinningPractice": pinning,
+        "PullRequest": pull_request,
+        "NetScore": net_score
+    }
+
+    json_data = json.dumps(package_rating)
+
+    return json_data, 200    
+
 if __name__ == "__main__":
+
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
