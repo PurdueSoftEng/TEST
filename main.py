@@ -85,6 +85,20 @@ packages_table = Table('packages', metadata,
                        Column('id', String),
                        )
 
+def package_json_fetch(content):
+    try:
+        bin = base64.b64decode(content)
+    except:
+        bin = base64.b64decode(content + '===')
+    zf = zipfile.ZipFile(io.BytesIO(bin))
+    try:
+        obj = zf.getinfo("package.json")
+        with zf.open("package.json", 'r') as ptr:
+            contents = ptr.read().decode('utf-8')
+            return json.loads(contents)
+    except:
+        return None
+
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
