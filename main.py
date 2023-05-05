@@ -426,29 +426,37 @@ def PackageRetrieve(id):
     if list(result.values())[0] == 0:
         return jsonify({'error': 'Package does not exist.'}), 404
 
-    vec = ()
+    # sql = "SELECT id, package_name, version, content, url, jsprogram FROM packages WHERE id=%s"
+    # val = [id]
 
-    for row in result:
-        id_result = result[0]
-        package_name = result[1]
-        version = result[2]
-        content = result[3]
-        url = result[4]
-        jsprogram = result[5]
+    # with conn.cursor() as cursor:
+    #     cursor.execute(sql, val)
+    #     result = cursor.fetchall()
 
-        package_data = {
-            "metadata": {
-                "Name": package_name,
-                "Version": version,
-                "ID": id_result
-            },
-            "data": {
-                "Content": content,
-                "URL": url,
-                "JSProgram": jsprogram
+    # vec = ()
+
+    if result is not None:
+        for row in result:
+            id_result = result[0]
+            package_name = result[1]
+            version = result[2]
+            content = result[3]
+            url = result[4]
+            jsprogram = result[5]
+
+            package_data = {
+                "metadata": {
+                    "Name": package_name,
+                    "Version": version,
+                    "ID": id_result
+                },
+                "data": {
+                    "Content": content,
+                    "URL": url,
+                    "JSProgram": jsprogram
+                }
             }
-        }
-        vec.append(package_data)
+            vec.append(package_data)
 
     json_data = json.dumps([ob.__dict__ for ob in vec])
     return json_data, 200
@@ -486,16 +494,16 @@ def PackageUpdate(id_path):
     return jsonify({'message': "Version is updated."}), 200
 
 
-@app.route('/package/<id_path>', methods=['DELETE'])
+@app.route('/package/<id>', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
-def PackageDelete(id_path):    
-    if id_path is None:
+def PackageDelete(id):    
+    if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
 
     with conn.cursor() as cursor:
         sql = "SELECT * FROM packages WHERE id=%s"
-        val = [id_path]
+        val = [id]
         cursor.execute(sql, val)
 
         packages = cursor.fetchall()
