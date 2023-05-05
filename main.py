@@ -130,18 +130,20 @@ def PackageByRegExGet():
         if len(packages) == 0:
             return jsonify({'error': "No packages match the regular expression."}), 404
         
+    package_metadata_all = []
     for package in packages:
         logger.info(f"package[0]: {package[0]}")
 
-    # package_name_obj = {"Name": package_name}
-    # id_obj = {"ID": id}
-    # package_metadta = {
-    #         "Name": name,
-    #         "Version": version,
-    #         "ID": id
-    #     }
+        package_name_obj = {"Name": package['package_name']}
+        id_obj = {"ID": package['id']}
+        package_metadata = {
+                "Name": package_name_obj,
+                "Version": package['version'],
+                "ID": package_name_obj
+            }
+        package_metadata_all.append(package_metadata)
     
-    return jsonify(packages), 200
+    return jsonify(package_metadata_all), 200
 
 @app.route('/')
 def hello_world():

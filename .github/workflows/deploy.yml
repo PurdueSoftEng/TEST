@@ -11,32 +11,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@master
-
-    # Setup gcloud CLI
+      uses: actions/checkout@master    # Setup gcloud CLI
     - uses: google-github-actions/setup-gcloud@v0
       with:
         service_account_email: ${{ secrets.GCP_EMAIL }}
         service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-        export_default_credentials: true
-    
-    # Configure Docker with Credentials
+        export_default_credentials: true    # Configure Docker with Credentials
     - name: Configure Docker
       run: |
-        gcloud auth configure-docker
-      
-    # Build the Docker image
+        gcloud auth configure-docker    # Build the Docker image
     - name: Build & Publish
       run: |
         gcloud config set project ${{ secrets.GCP_PROJECT }}
         gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_APPLICATION }}
-        gcloud config set run/region us-central1
-      
-    # Deploy the Docker image to the GKE cluster
+        gcloud config set run/region us-central1    # Deploy the Docker image to the GKE cluster
     - name: Deploy
       run: |
         gcloud run deploy ${{ secrets.GCP_APPLICATION }} --image gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_APPLICATION }} \
         --platform managed \
         --allow-unauthenticated \
-        --memory 512M
-
+        --memory 512M    # Install RESTler
+    - name: Install RESTler
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y restler    # Run RESTler
+    - name: Run RESTler
+      run: |
+        restler --config config.yaml    # Analyze the results
+    - name: Generate RESTler Report
+      run: |
+        restler-report --input RESTlerResults.json --output report.html
