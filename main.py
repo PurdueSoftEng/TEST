@@ -137,8 +137,8 @@ def PackageByRegExGet():
     
     return jsonify(packages), 200
 
-@app.route('/package/byRegEx', methods=['POST'])
-def PackageByRegExGet():
+@app.route('/package/{id}/rate', methods=['POST'])
+def RateGet():
 
     
     
