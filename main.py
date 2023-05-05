@@ -230,24 +230,19 @@ def PackagesList():
         results = cursor.fetchall()
 
     package_queries = []
-    name = {}
 
     for item in results:
         for field in item.items():
+            logger.info("Field")
             if field[0] == 'package_name':
                 name = field[1]
             if field[0] == 'version':
                 version = field[1]
-
         if version:
-            package_query = {
-                "Name": name,
-                "Version": version
-            }
-        else:
-            package_query = {
-                "Name": name,
-            }
+            metadata = {"Name":name, "Version":version, "ID": id}
+            data = {"Content":content, "JSProgram":jsprogram, "URL": url }
+
+        package_query = {"metadata": metadata, "data": data}
         
         package_queries.append(package_query)
     
@@ -535,6 +530,7 @@ def PackageDelete(id):
     return jsonify({'message': "Package is deleted."}), 200
 
 @app.route('/package/<id>/rate', methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageRate(id):
     if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
