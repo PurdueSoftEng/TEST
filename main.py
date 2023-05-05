@@ -31,6 +31,7 @@ logger.info(GITHUB_TOKEN)
 app = Flask(__name__)
 CORS(app, resources={r"/reset": {"origins": "https://purduesofteng.github.io/"}})
 CORS(app, resources={r"/packages": {"origins": "https://purduesofteng.github.io/"}})
+CORS(app, resources={r"/package/byRegEx": {"origins": "https://purduesofteng.github.io/"}})
 
 
 # Configure database connection settings
@@ -229,9 +230,7 @@ def PackagesList():
     for item in results:
         for field in item.items():
             if field[0] == 'package_name':
-                name = {
-                        "PackageName": field[1]
-                    }
+                name = field[1]
             if field[0] == 'version':
                 version = field[1]
 
