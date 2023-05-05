@@ -240,6 +240,14 @@ def PackagesList():
                 name = field[1]
             if field[0] == 'version':
                 version = field[1]
+            if field[0] == 'id':
+                id = field[1]
+            if field[0] == 'content':
+                content = field[1]
+            if field[0] == 'jsprogram':
+                jsprogram = field[1]
+            if field[0] == 'url':
+                jsprogram = field[1]
         # if version:
         #     metadata = {"Name":name, "Version":version, "ID": id}
         #     data = {"Content":content, "JSProgram":jsprogram, "URL": url }
@@ -333,6 +341,9 @@ def PackageCreate():
     url = ''
     jsprogram = ''
     content = ''
+
+    logger.info(f"URL: {url}")
+
 
     if ('URL' in request_body):
         url = request_body['URL']
