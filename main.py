@@ -336,6 +336,7 @@ def PackageCreate():
 
     if ('URL' in request_body):
         url = request_body['URL']
+        logger.info(f"URL: {url}")
         version = metricslib.get_version_py(url)
         package_name = metricslib.get_name_py(url)
     
