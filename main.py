@@ -536,7 +536,7 @@ def PackageUpdate(id_path):
     if list(result.values())[0] == 0:
         return jsonify({'error': 'Package does not exist.'}), 404
 
-    sql = "UPDATE packages SET package_id=%s package_name=%s version=%s WHERE id=%s"
+    sql = "UPDATE packages SET package_id=%s, package_name=%s, version=%s WHERE id=%s"
     val = [id, package_name, version, id_path]
 
     with conn.cursor() as cursor:
