@@ -491,15 +491,15 @@ def PackageRetrieve(id):
         result = cursor.fetchall()
 
     vec = ()
-
+    logger.info(f"Result: {result}")
     if result is not None:
         for row in result:
-            id_result = result[0]
-            package_name = result[1]
-            version = result[2]
-            content = result[3]
-            url = result[4]
-            jsprogram = result[5]
+            id_result = result['id']
+            package_name = result['package_name']
+            version = result['version']
+            content = result['content']
+            url = result['url']
+            jsprogram = result['jsprogram']
 
             package_data = {
                 "metadata": {
