@@ -1,0 +1,11 @@
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+
+jobs:
+  test_schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run every 30 minutes
+        run: echo "This step will run every 30 minutes"
+
