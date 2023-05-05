@@ -129,6 +129,8 @@ def add_table():
 @app.route('/package/byRegEx', methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByRegExGet():
+    logger.info(request.json)
+    logger.info(request.headers)
     package_queries = request.json
 
     if 'RegEx' not in package_queries:
@@ -182,6 +184,8 @@ def CreateAuthToken():
 @app.route('/reset', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def RegistryReset():
+    logger.info(request.json)
+    logger.info(request.headers)
     with conn.cursor() as cursor:
             # Get a list of all the tables in the database
         cursor.execute("SHOW TABLES")
@@ -206,6 +210,8 @@ def RegistryReset():
 @app.route('/packages', methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackagesList():
+    logger.info(request.json)
+    logger.info(request.headers)
     # Parse request body
     package_queries = request.json
 
@@ -288,6 +294,8 @@ def PackagesList():
 @app.route('/package/byName/<name>', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByNameDelete(name):
+    logger.info(request.json)
+    logger.info(request.headers)
     #name = request.args.get('name')
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
@@ -311,6 +319,8 @@ def PackageByNameDelete(name):
 @app.route('/package/byName/<name>', methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByNameGet(name):
+    logger.info(request.json)
+    logger.info(request.headers)
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -348,6 +358,8 @@ def PackageByNameGet(name):
 @app.route('/package', methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageCreate():
+    logger.info(request.json)
+    logger.info(request.headers)
     # Add package to database
     request_body = request.json
 
@@ -455,6 +467,8 @@ def PackageCreate():
 @app.route('/package/<id>', methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageRetrieve(id):
+    logger.info(request.json)
+    logger.info(request.headers)
     if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -507,7 +521,8 @@ def PackageRetrieve(id):
 @app.route('/package/<id_path>', methods=['PUT'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageUpdate(id_path):
-
+    logger.info(request.json)
+    logger.info(request.headers)
     request_body = request.json
 
     if ('Name' not in request_body) or ((request_body['Name'] == None) and ('ID' not in request_body)) or ((request_body['ID'] != None) and ('Version' not in request_body)) and (request_body['Version'] not in request_body):
@@ -539,7 +554,9 @@ def PackageUpdate(id_path):
 
 @app.route('/package/<id>', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
-def PackageDelete(id):    
+def PackageDelete(id):   
+    logger.info(request.json)
+    logger.info(request.headers) 
     if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
@@ -562,9 +579,19 @@ def PackageDelete(id):
 @app.route('/package/<id>/rate', methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageRate(id):
+    logger.info(request.json)
+    logger.info(request.headers)
     if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
+
+    sql = "SELECT * FROM packages WHERE id=%s"
+    val = [id]
+    with conn.cursor() as cursor:
+        cursor.execute(sql, val)
+        packages = cursor.fetchall()
+        if len(packages) == 0:
+            return jsonify({'error': "Package does not exist."}), 404
 
     sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score FROM packages WHERE id=%s"
     val = [id]
@@ -573,8 +600,7 @@ def PackageRate(id):
         cursor.execute(sql, val)
         result = cursor.fetchall()
         logger.info(f"Result: {result}")
-        #result = list(cursor.fetchall().values())
-        result = [10] * 10
+        result = list(cursor.fetchall().values())
     
     if result is None:
         return jsonify({'error': 'Package does not exist.'}), 404
