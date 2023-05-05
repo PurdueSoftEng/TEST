@@ -590,20 +590,21 @@ def PackageRate(id):
         cursor.execute(sql, val)
         result = cursor.fetchall()
         logger.info(f"Result: {result}")
+    
 
     if result is None:
         return jsonify({'error': 'Package does not exist.'}), 404
 
-    logger.info(f"Result: {result}")
+    result = result[0]
 
-    ramp_up = int(result[0])
-    bus_factor = int(result[1])
-    license = int(result[2])
-    correctness = int(result[3])
-    resp_maintain = int(result[4])
-    pinning = int(result[5])
-    pull_request = int(result[6])
-    net_score = int(result[7])
+    ramp_up = result['metric_one']
+    bus_factor = result['metric_two']
+    license = result['metric_three']
+    correctness = result['metric_four']
+    resp_maintain = result['metric_five']
+    pinning = result['metric_six']
+    pull_request = result['metric_seven']
+    net_score = result['total_score']
 
     package_rating = {
         "BusFactor": bus_factor,
