@@ -184,7 +184,6 @@ def CreateAuthToken():
 @app.route('/reset', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def RegistryReset():
-    logger.info(request.json)
     logger.info(request.headers)
     with conn.cursor() as cursor:
             # Get a list of all the tables in the database
@@ -294,7 +293,6 @@ def PackagesList():
 @app.route('/package/byName/<name>', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByNameDelete(name):
-    logger.info(request.json)
     logger.info(request.headers)
     #name = request.args.get('name')
     if name is None:
@@ -319,7 +317,6 @@ def PackageByNameDelete(name):
 @app.route('/package/byName/<name>', methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByNameGet(name):
-    logger.info(request.json)
     logger.info(request.headers)
     if name is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
@@ -467,7 +464,6 @@ def PackageCreate():
 @app.route('/package/<id>', methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageRetrieve(id):
-    logger.info(request.json)
     logger.info(request.headers)
     if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
@@ -555,7 +551,6 @@ def PackageUpdate(id_path):
 @app.route('/package/<id>', methods=['DELETE'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageDelete(id):   
-    logger.info(request.json)
     logger.info(request.headers) 
     if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
@@ -579,7 +574,6 @@ def PackageDelete(id):
 @app.route('/package/<id>/rate', methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageRate(id):
-    logger.info(request.json)
     logger.info(request.headers)
     if id is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
