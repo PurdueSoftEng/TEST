@@ -4,7 +4,7 @@ on:
     branches:
       - master
   schedule:
-      - cron: '*/1 * * * *'
+      - cron: '*/20 * * * *'
 jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
