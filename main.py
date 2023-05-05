@@ -235,7 +235,7 @@ def PackagesList():
     data = ""
     for item in results:
         for field in item.items():
-            logger.info("Field")
+            logger.info(f"Field: {field}")
             if field[0] == 'package_name':
                 name = field[1]
             if field[0] == 'version':
