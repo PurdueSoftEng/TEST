@@ -231,6 +231,8 @@ def PackagesList():
 
     package_queries = []
 
+    metadata = ""
+    data = ""
     for item in results:
         for field in item.items():
             logger.info("Field")
@@ -238,10 +240,9 @@ def PackagesList():
                 name = field[1]
             if field[0] == 'version':
                 version = field[1]
-        if version:
-            metadata = {"Name":name, "Version":version, "ID": id}
-            data = {"Content":content, "JSProgram":jsprogram, "URL": url }
-
+        # if version:
+        #     metadata = {"Name":name, "Version":version, "ID": id}
+        #     data = {"Content":content, "JSProgram":jsprogram, "URL": url }
         package_query = {"metadata": metadata, "data": data}
         
         package_queries.append(package_query)
