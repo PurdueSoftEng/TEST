@@ -355,15 +355,12 @@ def PackageCreate():
         name = metricslib.get_name(url)
         version = metricslib.get_version_py(url)
 
-    
-
     data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
     logger.info(f'data: {data}')
     logger.info(f'data: {data[0]}')
 
     data = json.loads(data)
     logger.info(f'data: {data}')
-
 
     metric_one = data['ramp_up']
     metric_two = data['bus_factor']
@@ -413,6 +410,11 @@ def PackageCreate():
             "JSProgram": jsprogram
         }
     }
+
+    query = users_table.insert().values(name='admin', isadmin=False)
+    with conn.cursor() as cursor:
+        cursor.execute(str(query))
+        conn.commit()
 
     json_data = json.dumps(package_data)
 
@@ -569,10 +571,9 @@ def PackageRate(id_path):
         "PullRequest": pull_request,
         "NetScore": net_score
     }
-    package_metadata = "meta"
-    json_data = json.dumps(package_rating)
 
-    return package_metadata, 200    
+    json_data = json.dumps(package_rating)
+    return json_data, 200    
 
 if __name__ == "__main__":
 
