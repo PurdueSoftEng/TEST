@@ -79,6 +79,7 @@ packages_table = Table('packages', metadata,
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def create_table():
     cursor = conn.cursor()
     cursor.execute(
@@ -93,6 +94,7 @@ def create_table():
     return 'Table created and data inserted successfully.'
 
 @app.route('/add-table', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def add_table():
     # Insert new record into the test_table
     query = test_table.insert().values(name='test', value=1.23)
@@ -103,6 +105,7 @@ def add_table():
     return jsonify({'message': 'Table added successfully!'})
 
 @app.route('/package/byRegEx', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByRegExGet():
     package_queries = request.json
 
@@ -142,6 +145,7 @@ def PackageByRegExGet():
     return jsonify(package_metadata_all), 200
 
 @app.route('/')
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
@@ -151,6 +155,7 @@ def hello_world():
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def CreateAuthToken():
     return jsonify({'message': 'This system does not support authentication.'}), 501
 
@@ -255,6 +260,7 @@ def PackagesList():
     return total_package_query, 200
 
 @app.route('/package/byName/<name>', methods=['DELETE'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByNameDelete(name):
     #name = request.args.get('name')
     if name is None:
@@ -277,6 +283,7 @@ def PackageByNameDelete(name):
     return jsonify({'message': "Package is deleted."}), 200
 
 @app.route('/package/byName', methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageByNameGet():
     name = request.args.get('name')
     if name is None:
@@ -314,6 +321,7 @@ def PackageByNameGet():
     return package_history, 200
 
 @app.route('/package', methods=['POST'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageCreate():
     # Add package to database
     request_body = request.json
@@ -400,6 +408,7 @@ def PackageCreate():
     return json_data, 201
 
 @app.route('/package/<id_path>', methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageRetrieve(id_path):
     if id_path is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
@@ -454,6 +463,7 @@ def PackageRetrieve(id_path):
     return json_data, 200
 
 @app.route('/package/<id_path>', methods=['PUT'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageUpdate(id_path):
 
     request_body = request.json
@@ -486,6 +496,7 @@ def PackageUpdate(id_path):
 
 
 @app.route('/package/<id_path>', methods=['DELETE'])
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
 def PackageDelete(id_path):    
     if id_path is None:
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
