@@ -112,6 +112,9 @@ def PackageByRegExGet():
     
     logger.info(f"Regex: {regex}")
 
+    if regex == "":
+        return jsonify({'error': "No packages match the regular expression."}), 404
+
     try:
         re.compile(regex)
         print("Valid regex!")
@@ -126,6 +129,8 @@ def PackageByRegExGet():
         packages = cursor.fetchall()
         if len(packages) == 0:
             return jsonify({'error': "No packages match the regular expression."}), 404
+        
+    logger.info(f"packages[package_name]: {packages['package_name']}")
 
     # package_name_obj = {"Name": package_name}
     # id_obj = {"ID": id}
