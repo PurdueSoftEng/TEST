@@ -503,9 +503,7 @@ def PackageRetrieve(id):
                 }
             }
             vec.append(package_data)
-
-    json_data = json.dumps([ob.__dict__ for ob in vec])
-    return json_data, 200
+    return jsonify(vec), 200
 
 @app.route('/package/<id_path>', methods=['PUT'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
