@@ -528,7 +528,7 @@ def PackageRate(id_path):
         cursor.execute(sql, val)
         result = cursor.fetchone()
 
-    if list(result.values())[0] == 0:
+    if result is None:
         return jsonify({'error': 'Package does not exist.'}), 404
 
     sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_siz, metric_seven, total_score FROM packages WHERE id=%s"
