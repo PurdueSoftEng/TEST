@@ -110,7 +110,7 @@ def PackageByRegExGet():
     else:
         regex = package_queries["RegEx"]
     
-    logger.info("Regex: ", regex)
+    logger.info(f"Regex: {regex}")
 
     try:
         re.compile(regex)
@@ -125,9 +125,25 @@ def PackageByRegExGet():
 
         packages = cursor.fetchall()
         if len(packages) == 0:
-            return jsonify({'error': "No packages match the regular expression."}), 404        
+            return jsonify({'error': "No packages match the regular expression."}), 404
+
+    # package_name_obj = {"Name": package_name}
+    # id_obj = {"ID": id}
+    # package_metadta = {
+    #         "Name": name,
+    #         "Version": version,
+    #         "ID": id
+    #     }
+    
+    return jsonify(packages), 200
+
+@app.route('/package/byRegEx', methods=['POST'])
+def PackageByRegExGet():
+
+    
     
     return jsonify({'message': 'Table added successfully!'})
+
 
 @app.route('/')
 def hello_world():
@@ -281,11 +297,14 @@ def PackageByNameGet():
     content = "tempcontentstring"
     jsprogram = "testprogram"
     url = ""
+    package_name = {"Name": name}
+    id = name+version
+    id_obj = {"ID": id}
     package_history = {
         "PackageMetadata": {
-            "Name": name,
+            "Name": package_name,
             "Version": version,
-            "ID": id
+            "ID": id_obj
         },
         "PackageData": {
             "Content": content,
@@ -363,11 +382,13 @@ def PackageCreate():
         cursor.execute(sql, val)
         conn.commit()
 
+    package_name_obj = {"Name": package_name}
+    id_obj = {"ID": id}
     package_data = {
         "metadata": {
-            "Name": package_name,
+            "Name": package_name_obj,
             "Version": version,
-            "ID": id
+            "ID": id_obj
         },
         "data": {
             "Content": content,
@@ -413,11 +434,14 @@ def PackageGetter(id_path):
         url = result[4]
         jsprogram = result[5]
 
+        package_name_obj = {"Name": package_name}
+        id_obj = {"ID": id}
+
         package_data = {
             "metadata": {
-                "Name": package_name,
+                "Name": package_name_obj,
                 "Version": version,
-                "ID": id
+                "ID": id_obj
             },
             "data": {
                 "Content": content,
