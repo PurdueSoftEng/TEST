@@ -130,7 +130,7 @@ def PackageByRegExGet():
         if len(packages) == 0:
             return jsonify({'error': "No packages match the regular expression."}), 404
         
-    logger.info(f"packages[package_name]: {packages['package_name']}")
+    logger.info(f"packages[0]: {packages[0]}")
 
     # package_name_obj = {"Name": package_name}
     # id_obj = {"ID": id}
@@ -142,21 +142,13 @@ def PackageByRegExGet():
     
     return jsonify(packages), 200
 
-@app.route('/package/<id>/rate', methods=['GET'])
-def PackageRate(id):
-    if id is None:
-        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
-        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
-    
-    logger.info(f'if: {id}')
-    
-    return jsonify({'message': 'Table added successfully!'})
-
 @app.route('/')
 def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
     logger.info(metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST"))
+    #logger.info(metricslib.get_name("https://github.com/PurdueSoftEng/TEST"))
+
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
@@ -548,19 +540,19 @@ def PackageRate(id_path):
     net_score = int(result[7])
 
     package_rating = {
-        "BusFacotr": bus_factor,
-        "Correctness": correctness,
-        "RampUp": ramp_up,
-        "ResponsiveMaintainer": resp_maintain,
-        "LicenseScore": license,
+        "BusFactor": bus_factor,
+        "Correctness": correctness, 
+        "RampUp": ramp_up, 
+        "ResponsiveMaintainer": resp_maintain, 
+        "LicenseScore": license, 
         "GoodPinningPractice": pinning,
         "PullRequest": pull_request,
         "NetScore": net_score
     }
-
+    package_metadata = "meta"
     json_data = json.dumps(package_rating)
 
-    return json_data, 200    
+    return package_metadata, 200    
 
 if __name__ == "__main__":
 
