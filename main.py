@@ -142,13 +142,15 @@ def PackageByRegExGet():
     
     return jsonify(packages), 200
 
-@app.route('/package/{id}/rate', methods=['POST'])
-def RateGet():
-
+@app.route('/package/<id>/rate', methods=['GET'])
+def PackageRate(id):
+    if id is None:
+        return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
+        \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
     
+    logger.info(f'if: {id}')
     
     return jsonify({'message': 'Table added successfully!'})
-
 
 @app.route('/')
 def hello_world():
