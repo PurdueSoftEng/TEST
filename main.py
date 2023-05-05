@@ -540,16 +540,6 @@ def PackageRate(id):
         return jsonify({'error': "There is missing field(s) in the PackageQuery/AuthenticationToken\
         \ or it is formed improperly, or the AuthenticationToken is invalid."}), 400
 
-    sql = "SELECT COUNT(*) FROM packages WHERE id=%s"
-    val = [id]
-
-    with conn.cursor() as cursor:
-        cursor.execute(sql, val)
-        result = cursor.fetchone()
-
-    if result is None:
-        return jsonify({'error': 'Package does not exist.'}), 404
-
     sql = "SELECT metric_one, metric_two, metric_three, metric_four, metric_five, metric_six, metric_seven, total_score FROM packages WHERE id=%s"
     val = [id]
 
@@ -559,6 +549,9 @@ def PackageRate(id):
         logger.info(f"Result: {result}")
         #result = list(cursor.fetchall().values())
         result = [10] * 10
+    
+    if result is None:
+        return jsonify({'error': 'Package does not exist.'}), 404
 
     logger.info(f"Result: {result}")
 
