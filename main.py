@@ -478,7 +478,7 @@ def PackageRetrieve(id):
         cursor.execute(sql, val)
         result = cursor.fetchall()
 
-    vec = ()
+    vec = []
     logger.info(f"Result: {result}")
     if result is not None:
         result = result[0]
@@ -503,9 +503,7 @@ def PackageRetrieve(id):
                 }
             }
             vec.append(package_data)
-
-    json_data = json.dumps([ob.__dict__ for ob in vec])
-    return json_data, 200
+    return jsonify(vec), 200
 
 @app.route('/package/<id_path>', methods=['PUT'])
 @cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
@@ -519,7 +517,7 @@ def PackageUpdate(id_path):
     meta = request_body['metadata']
     dat = request_body['data']
 
-    if ('Name' not in meta) or ((request_body['Name'] == meta) and ('ID' not in request_body)) or ((request_body['ID'] != meta) and ('Version' not in meta)) and (request_body['Version'] not in meta):
+    if ('Name' not in meta) or ('ID' not in meta) or ('Version' not in meta):
         return jsonify({'error': "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."}), 400
     
     id = meta['ID']
@@ -536,7 +534,7 @@ def PackageUpdate(id_path):
     if list(result.values())[0] == 0:
         return jsonify({'error': 'Package does not exist.'}), 404
 
-    sql = "UPDATE packages SET package_id=%s package_name=%s version=%s WHERE id=%s"
+    sql = "UPDATE packages SET package_id=%s, package_name=%s, version=%s WHERE id=%s"
     val = [id, package_name, version, id_path]
 
     with conn.cursor() as cursor:
