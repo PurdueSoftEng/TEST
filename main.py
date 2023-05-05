@@ -4,6 +4,9 @@ import logging
 import json
 import re
 import metricslib
+import base64
+import zipfile
+import io
 from google.cloud import logging as glogging
 from google.cloud.logging_v2.handlers import CloudLoggingHandler
 from flask import Flask, request, jsonify
@@ -76,6 +79,20 @@ packages_table = Table('packages', metadata,
                        Column('total_score', Float),
                        Column('id', String),
                        )
+
+def package_json_fetch(content):
+    try:
+        bin = base64.b64decode(content)
+    except:
+        bin = base64.b64decode(content + '===')
+    zf = zipfile.ZipFile(io.BytesIO(bin))
+    try:
+        obj = zf.getinfo("package.json")
+        with zf.open("package.json", 'r') as ptr:
+            contents = ptr.read().decode('utf-8')
+            return json.loads(contents)
+    except:
+        return None
 
 # Create a test table and insert data
 @app.route('/create_table', methods=['POST'])
