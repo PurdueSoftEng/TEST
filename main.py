@@ -16,12 +16,15 @@ handler = CloudLoggingHandler(client)
 handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
 
+GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 logger.info("This is an info message")
 logger.warning("This is a warning message")
 logger.error("This is an error message")
+logger.info(GITHUB_TOKEN)
 
 
 app = Flask(__name__)
@@ -473,4 +476,5 @@ def PackageDelete(id_path):
 
     
 if __name__ == "__main__":
+
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
