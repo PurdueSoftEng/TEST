@@ -426,13 +426,6 @@ def PackageRetrieve(id):
     if list(result.values())[0] == 0:
         return jsonify({'error': 'Package does not exist.'}), 404
 
-    sql = "SELECT id, package_name, version, content, url, jsprogram FROM packages WHERE id=%s"
-    val = [id]
-
-    with conn.cursor() as cursor:
-        cursor.execute(sql, val)
-        result = cursor.fetchall()
-
     vec = ()
 
     for row in result:
