@@ -149,7 +149,7 @@ def RateGet():
 def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
-    #logger.info(metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST"))
+    logger.info(metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST"))
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
