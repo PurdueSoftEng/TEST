@@ -548,7 +548,9 @@ def PackageRate(id_path):
 
     with conn.cursor() as cursor:
         cursor.execute(sql, val)
-        result = list(cursor.fetchall().values())
+        logger.info(f"Result: {result}")
+        #result = list(cursor.fetchall().values())
+        result = [10] * 10
 
     logger.info(f"Result: {result}")
 
