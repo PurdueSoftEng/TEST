@@ -463,7 +463,7 @@ def PackageRetrieve(id):
         result = cursor.fetchall()
 
     vec = ()
-
+    logger.info(f"Result: {result}")
     if result is not None:
         for row in result:
             id_result = result[0]
