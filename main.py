@@ -244,7 +244,11 @@ def PackagesList():
         results = cursor.fetchall()
 
     package_queries = []
-
+    version = ''
+    id = ''
+    content = ''
+    jsprogram = ''
+    url = ''
     metadata = ""
     data = ""
     for item in results:
@@ -261,10 +265,10 @@ def PackagesList():
             if field[0] == 'jsprogram':
                 jsprogram = field[1]
             if field[0] == 'url':
-                jsprogram = field[1]
-        # if version:
-        #     metadata = {"Name":name, "Version":version, "ID": id}
-        #     data = {"Content":content, "JSProgram":jsprogram, "URL": url }
+                url = field[1]
+        if version:
+            metadata = {"Name":packageName, "Version":version, "ID": id}
+            data = {"Content":content, "JSProgram":jsprogram, "URL": url }
         package_query = {"metadata": metadata, "data": data}
         
         package_queries.append(package_query)
@@ -352,12 +356,11 @@ def PackageCreate():
     
     version = '0.0.0'
     package_name = 'temp'
-    url = ''
     jsprogram = ''
     content = ''
+    url = ''
 
     logger.info(f"URL: {url}")
-
 
     if ('URL' in request_body):
         url = request_body['URL']
