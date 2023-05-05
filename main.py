@@ -10,8 +10,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 
-data = metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST")
-
 client = glogging.Client()
 
 handler = CloudLoggingHandler(client)
@@ -24,8 +22,6 @@ logger.addHandler(handler)
 logger.info("This is an info message")
 logger.warning("This is a warning message")
 logger.error("This is an error message")
-
-logger.info("data: ", data)
 
 
 app = Flask(__name__)
@@ -128,6 +124,7 @@ def hello_world():
     logger.debug('Hello, world!')
     name = request.args.get('name', 'World')
     #metricslib.calcscore_py("https://github.com/cloudinary/cloudinary_npm")
+    logger.info(metricslib.calcscore_py("https://github.com/PurdueSoftEng/TEST"))
     return f'Howdy {name}!'
 
 @app.route('/authenticate', methods=['PUT'])
