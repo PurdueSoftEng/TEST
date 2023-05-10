@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - master
-  schedule:
-      - cron: '*/20 * * * *'
 jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
